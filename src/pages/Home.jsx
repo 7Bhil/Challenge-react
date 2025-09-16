@@ -2,7 +2,7 @@ export default function Home(){
     return(
         <>
         bonjour tout le monde 
-        <p>Hello world</p>
+        <p className="text-white">Hello world</p>
         </>
     )
 }
