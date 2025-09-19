@@ -1,3 +1,4 @@
+import {Link} from 'react-router-dom'
 const ChallengeCard = ({ challenge }) => {
   const getStatusColor = (status) => {
     switch(status) {
@@ -27,7 +28,6 @@ const ChallengeCard = ({ challenge }) => {
           </span>
         </div>
         
-        <p className="text-gray-600 mb-4">{challenge.description}</p>
         
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
@@ -52,9 +52,11 @@ const ChallengeCard = ({ challenge }) => {
           
         </div>
         
-        <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300">
-          Voir le défi
-        </button>
+        <Link to={`/challenge/${challenge.id}`}>
+  <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300">
+    Voir le défi
+  </button>
+</Link>
       </div>
     </div>
   );

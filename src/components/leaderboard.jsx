@@ -4,7 +4,7 @@ import leaderboardData from '../data/leaderboard'; // ✅ import direct
 
 const Leaderboard = () => {
   const [rankings, setRankings] = useState([]);
-  const [filter, setFilter] = useState('all'); // 'all', 'current', 'general'
+  const [filter] = useState('all'); // 'all', 'current', 'general'
 
   useEffect(() => {
     // ✅ pas besoin de fetch

@@ -67,6 +67,7 @@ const UserProfile = () => {
           <Link to="/leaderboard" className="text-purple-600 hover:text-purple-800">
             Retour au classement
           </Link>
+         
         </div>
       </div>
     );
@@ -84,6 +85,9 @@ const UserProfile = () => {
           </svg>
           Retour au classement
         </Link>
+         <Link to="/" className="text-red-600 hover:text-purple-800">
+            Retour a l'acceuil
+          </Link>
       </div>
 
       {/* En-tête du profil */}
