@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { User, Mail, Lock, Eye, EyeOff, LogIn, UserPlus, ArrowLeft } from 'lucide-react';
-import AuthApp from  '../../components/AuthApp';
+import { Link } from 'react-router-dom';
 // Composant de connexion
-export default function Login ({ onSwitchToRegister }) {
+export default function Login () {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -119,12 +119,13 @@ export default function Login ({ onSwitchToRegister }) {
           <div className="mt-8 text-center">
             <p className="text-gray-600">
               Pas encore de compte ?{' '}
-              <button
-                onClick={onSwitchToRegister}
-                className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
-              >
-                Créer un compte
-              </button>
+             <Link className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+             to='/register'
+>
+             Créer un compte
+             </Link>
+                
+              
             </p>
           </div>
         </div>

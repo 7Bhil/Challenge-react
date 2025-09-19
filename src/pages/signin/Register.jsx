@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Mail, Lock, Eye, EyeOff, LogIn, UserPlus, ArrowLeft } from 'lucide-react';
-
-export default function Register({ onSwitchToLogin }) {
+import { Link } from 'react-router-dom';
+export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -41,9 +41,6 @@ export default function Register({ onSwitchToLogin }) {
         type: 'success', 
         text: 'Inscription réussie ! Vous pouvez maintenant vous connecter.' 
       });
-      
-      // Redirection automatique vers login après 3 secondes
-      setTimeout(() => onSwitchToLogin(), 3000);
       
     } catch (error) {
       setMessage({ type: 'error', text: error.message });
@@ -189,12 +186,12 @@ export default function Register({ onSwitchToLogin }) {
           <div className="mt-8 text-center">
             <p className="text-gray-600">
               Déjà un compte ?{' '}
-              <button
-                onClick={onSwitchToLogin}
+              <Link
                 className="text-violet-600 hover:text-violet-700 font-semibold transition-colors"
+                to="/login"
               >
                 Se connecter
-              </button>
+              </Link>
             </p>
           </div>
         </div>
