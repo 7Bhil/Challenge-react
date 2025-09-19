@@ -2,49 +2,38 @@ import { useState, useEffect } from 'react';
 import RankingItem from './RankingItem';
 import { Link } from 'react-router-dom';
 
+// On importe directement les données
+import leaderboardData from '../data/leaderboard';
+
 const Rankings = () => {
   const [rankings, setRankings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchRankings = async () => {
-      try {
-        const response = await fetch('/data/leaderboard.json');
-        
-        if (!response.ok) {
-          throw new Error('Impossible de charger le classement');
-        }
-        
-        const data = await response.json();
-        
-        // Vérifier si les données sont un tableau
-        let rankingsArray = [];
-        if (Array.isArray(data)) {
-          rankingsArray = data;
-        } else if (data.rankings && Array.isArray(data.rankings)) {
-          rankingsArray = data.rankings;
-        } else if (data.data && Array.isArray(data.data)) {
-          rankingsArray = data.data;
-        } else {
-          throw new Error('Format de données inattendu');
-        }
-        
-        // Trier par score décroissant et prendre les 3 premiers
-        const topThreeByScore = rankingsArray
-          .sort((a, b) => b.score - a.score) // Tri décroissant par score
-          .slice(0, 3); // Prendre les 3 premiers
-        
-        setRankings(topThreeByScore);
-      } catch (error) {
-        console.error('Erreur lors du chargement du classement:', error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      let rankingsArray = [];
 
-    fetchRankings();
+      if (Array.isArray(leaderboardData)) {
+        rankingsArray = leaderboardData;
+      } else if (leaderboardData.rankings && Array.isArray(leaderboardData.rankings)) {
+        rankingsArray = leaderboardData.rankings;
+      } else if (leaderboardData.data && Array.isArray(leaderboardData.data)) {
+        rankingsArray = leaderboardData.data;
+      } else {
+        throw new Error('Format de données inattendu');
+      }
+
+      // Trier par score décroissant et prendre les 3 premiers
+      const topThreeByScore = rankingsArray
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+
+      setRankings(topThreeByScore);
+    } catch (error) {
+      console.error('Erreur lors du chargement du classement:', error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   if (loading) {
@@ -52,16 +41,6 @@ const Rankings = () => {
       <div className="container mx-auto px-4 py-12 bg-gray-50">
         <div className="flex justify-center items-center h-40">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-12 bg-gray-50">
-        <div className="text-center py-10">
-          <p className="text-red-500 mb-4">Erreur: {error}</p>
         </div>
       </div>
     );

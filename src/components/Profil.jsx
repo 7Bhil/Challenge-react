@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
+// Import direct des données
+import usersData from '../data/user';
+import leaderboardData from '../data/leaderboard';
+
 const UserProfile = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
@@ -9,55 +13,40 @@ const UserProfile = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // Charger les données utilisateur
-        const userResponse = await fetch('/data/users.json');
-        if (!userResponse.ok) throw new Error('Erreur de chargement des utilisateurs');
-        
-        const userData = await userResponse.json();
-        let usersArray = [];
-        
-        if (Array.isArray(userData)) {
-          usersArray = userData;
-        } else if (userData.users && Array.isArray(userData.users)) {
-          usersArray = userData.users;
-        } else {
-          throw new Error('Format de données utilisateur inattendu');
-        }
-        
-        const foundUser = usersArray.find(u => u.id === parseInt(userId));
-        if (!foundUser) throw new Error('Utilisateur non trouvé');
-        
-        setUser(foundUser);
-
-        // Charger les classements de l'utilisateur
-        const rankingsResponse = await fetch('/data/leaderboard.json');
-        if (!rankingsResponse.ok) throw new Error('Erreur de chargement des classements');
-        
-        const rankingsData = await rankingsResponse.json();
-        let rankingsArray = [];
-        
-        if (Array.isArray(rankingsData)) {
-          rankingsArray = rankingsData;
-        } else if (rankingsData.rankings && Array.isArray(rankingsData.rankings)) {
-          rankingsArray = rankingsData.rankings;
-        } else {
-          throw new Error('Format de données classement inattendu');
-        }
-        
-        const userRankings = rankingsArray.filter(r => r.challenger_id === parseInt(userId));
-        setUserRankings(userRankings);
-
-      } catch (error) {
-        console.error('Erreur lors du chargement des données:', error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
+    try {
+      // Charger les données utilisateurs
+      let usersArray = [];
+      if (Array.isArray(usersData)) {
+        usersArray = usersData;
+      } else if (usersData.users && Array.isArray(usersData.users)) {
+        usersArray = usersData.users;
+      } else {
+        throw new Error('Format de données utilisateur inattendu');
       }
-    };
 
-    fetchUserData();
+      const foundUser = usersArray.find(u => u.id === parseInt(userId));
+      if (!foundUser) throw new Error('Utilisateur non trouvé');
+      setUser(foundUser);
+
+      // Charger les classements liés à l'utilisateur
+      let rankingsArray = [];
+      if (Array.isArray(leaderboardData)) {
+        rankingsArray = leaderboardData;
+      } else if (leaderboardData.rankings && Array.isArray(leaderboardData.rankings)) {
+        rankingsArray = leaderboardData.rankings;
+      } else {
+        throw new Error('Format de données classement inattendu');
+      }
+
+      const userRankings = rankingsArray.filter(r => r.challenger_id === parseInt(userId));
+      setUserRankings(userRankings);
+
+    } catch (err) {
+      console.error('Erreur lors du chargement des données:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }, [userId]);
 
   if (loading) {
@@ -157,28 +146,20 @@ const UserProfile = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Défi
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Score
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Rang
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Défi</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rang</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {userRankings.map((ranking) => (
               <tr key={ranking.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">Défi #{ranking.challenge_id}</div>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  Défi #{ranking.challenge_id}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900 font-bold">{ranking.score}/20</div>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                  {ranking.score}/20
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   #{ranking.rank}

@@ -2,60 +2,39 @@ import { useState, useEffect } from 'react';
 import ChallengeCard from './ChallengeCard';
 import { Link } from 'react-router-dom';
 
+// Import direct du fichier JSON depuis src/data/
+import challengesData from '../data/challenge.js';
+
 const ChallengesList = () => {
   const [challenges, setChallenges] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Plus besoin de loading pour l'import direct
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchChallenges = async () => {
-      try {
-        const response = await fetch('/data/challenge.json');
-        
-        if (!response.ok) {
-          throw new Error('Impossible de charger les défis');
-        }
-        
-        const data = await response.json();
-        
-        // Vérifier si les données sont un tableau
-        let challengesArray = [];
-        if (Array.isArray(data)) {
-          challengesArray = data;
-        } else if (data.challenges && Array.isArray(data.challenges)) {
-          challengesArray = data.challenges;
-        } else if (data.data && Array.isArray(data.data)) {
-          challengesArray = data.data;
-        } else {
-          throw new Error('Format de données inattendu');
-        }
-        
-        // Filtrer pour n'afficher que les défis "en cours"
-        const ongoingChallenges = challengesArray.filter(
-          challenge => challenge.status === 'en cours'
-        );
-        
-        setChallenges(ongoingChallenges);
-      } catch (error) {
-        console.error('Erreur lors du chargement des défis:', error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
+    try {
+      // Vérifier si les données sont un tableau
+      let challengesArray = [];
+      if (Array.isArray(challengesData)) {
+        challengesArray = challengesData;
+      } else if (challengesData.challenges && Array.isArray(challengesData.challenges)) {
+        challengesArray = challengesData.challenges;
+      } else if (challengesData.data && Array.isArray(challengesData.data)) {
+        challengesArray = challengesData.data;
+      } else {
+        throw new Error('Format de données inattendu');
       }
-    };
-
-    fetchChallenges();
+      
+      // Filtrer pour n'afficher que les défis "en cours"
+      const ongoingChallenges = challengesArray.filter(
+        challenge => challenge.status === 'en cours'
+      );
+      
+      setChallenges(ongoingChallenges);
+    } catch (error) {
+      console.error('Erreur lors du traitement des défis:', error);
+      setError(error.message);
+    }
   }, []);
-
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700"></div>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
