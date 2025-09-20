@@ -6,10 +6,12 @@ import Login from '../pages/signin/Login'
 import Register from '../pages/signin/Register'
 import ChallengesList from '../components/ChallengesList'
 import ChallengeDetail from '../components/ChallengeDetail'
+import Navbar from '../pages/public/Navbar'
 
 export default function AppRoutes(){
   return (
     <>
+    <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/challenges" element={<ChallengesList />} />

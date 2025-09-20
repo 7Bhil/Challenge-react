@@ -32,8 +32,14 @@ const Leaderboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-purple-800 mb-6">Classement Général</h1>
+      <h1 className="text-3xl font-bold text-purple-800 mb-6">Classement Général
+        <Link to="/" className="text-red-600 text-5x float-end hover:text-text-800">
+            Retour à l'accueil
+          </Link>
+      </h1>
+      
       <div className="bg-white rounded-lg shadow overflow-hidden">
+        
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
