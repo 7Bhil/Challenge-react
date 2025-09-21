@@ -6,8 +6,13 @@ import Login from '../pages/signin/Login'
 import Register from '../pages/signin/Register'
 import ChallengesList from '../components/ChallengesList'
 import ChallengeDetail from '../components/ChallengeDetail'
-import Navbar from '../pages/public/Navbar'
-
+import Navbar from '../components/Navbar'
+import CreateChallenge from '../pages/Admin/CreationChallenges'
+import AdminChallenges from '../pages/Admin/GestionChallenges'
+import EditChallenge from '../pages/Admin/ModifChallenge'
+import SuperAdminChallenges from '../pages/SuperAdmin/AllChallenges'
+import JurySubmissions from '../components/Notes'
+import SuperAdminUsers from '../components/Gestions des users'
 export default function AppRoutes(){
   return (
     <>
@@ -20,6 +25,12 @@ export default function AppRoutes(){
         <Route path="/profile/:userId" element={<Profil />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/creation-challenge" element={<CreateChallenge />} />
+        <Route path="/gestion-challenge" element={<AdminChallenges />} />
+        <Route path="/edit-challenge/:id" element={<EditChallenge />} />
+        <Route path="/super-gestion-challenge" element={<SuperAdminChallenges />} />
+         <Route path="/jury/submissions" element={<JurySubmissions />} />
+        <Route path="/super-admin/users" element={<SuperAdminUsers />} />
       </Routes>
     </>
   )

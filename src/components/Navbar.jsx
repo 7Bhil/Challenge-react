@@ -80,6 +80,16 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const handleUsersManagement = () => {
+    closeMenu();
+    navigate('/admin/users');
+  };
+
+  const handleChallengesManagement = () => {
+    closeMenu();
+    navigate('/admin/challenges');
+  };
+
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
@@ -98,8 +108,7 @@ const Navbar = () => {
             </button>
             <div className="flex-shrink-0 ml-4 md:ml-0">
               <Link to="/" className="text-xl font-bold flex items-center" onClick={closeMenu}>
-                <FaTasks className="mr-2" />
-                ChallengeHub
+                Bhil<span className='text-3xl text-red-600'>$</span>
               </Link>
             </div>
           </div>
@@ -137,15 +146,16 @@ const Navbar = () => {
                   
                   {isAdmin && (
                     <>
-                      <Link 
-                        to="/admin/users" 
-                        className="px-3 py-2 rounded-md text-sm font-medium hover:bg-purple-700 flex items-center"
+                      <button
+                        onClick={handleUsersManagement}
+                        className="px-3 py-2 rounded-md text-sm font-medium bg-indigo-600 hover:bg-indigo-700 flex items-center"
                       >
                         <FaUsers className="mr-1" /> Gestion Users
-                      </Link>
-                      <Link 
-                        to="/admin/challenges" 
-                        className="px-3 py-2 rounded-md text-sm font-medium hover:bg-purple-700 flex items-center"
+                      </button>
+                      <Link
+                      to="/create-challenge"
+                        onClick={handleChallengesManagement}
+                        className="px-3 py-2 rounded-md text-sm font-medium bg-teal-600 hover:bg-teal-700 flex items-center"
                       >
                         <FaCog className="mr-1" /> Gestion Challenges
                       </Link>
@@ -178,13 +188,13 @@ const Navbar = () => {
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                       <button
                         onClick={handleLogin}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 w-full text-left flex items-center"
+                        className=" px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 w-full text-left flex items-center"
                       >
                         <FaSignInAlt className="mr-2" /> Se connecter
                       </button>
                       <button
                         onClick={handleRegister}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 w-full text-left flex items-center"
+                        className=" px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 w-full text-left flex items-center"
                       >
                         <FaUserPlus className="mr-2" /> S'inscrire
                       </button>
@@ -203,21 +213,21 @@ const Navbar = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-purple-900">
             <Link 
               to="/" 
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
+              className=" px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
               onClick={closeMenu}
             >
               <FaHome className="mr-2" /> Accueil
             </Link>
             <Link 
               to="/challenges" 
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
+              className=" px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
               onClick={closeMenu}
             >
               <FaTasks className="mr-2" /> Challenges
             </Link>
             <Link 
               to="/leaderboard" 
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
+              className=" px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
               onClick={closeMenu}
             >
               <FaTrophy className="mr-2" /> Classement
@@ -227,7 +237,7 @@ const Navbar = () => {
               <>
                 <Link 
                   to="/profile/1" 
-                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
+                  className=" px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
                   onClick={closeMenu}
                 >
                   <FaUser className="mr-2" /> Profil
@@ -235,23 +245,21 @@ const Navbar = () => {
                 
                 {isAdmin && (
                   <>
-                    <Link 
-                      to="/admin/users" 
-                      className="block px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
-                      onClick={closeMenu}
+                    <button
+                      onClick={handleUsersManagement}
+                      className="w-full text-left px-3 py-2 rounded-md text-base font-medium bg-indigo-600 hover:bg-indigo-700 flex items-center"
                     >
                       <FaUsers className="mr-2" /> Gestion Utilisateurs
-                    </Link>
-                    <Link 
-                      to="/admin/challenges" 
-                      className="block px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
-                      onClick={closeMenu}
+                    </button>
+                    <button
+                      onClick={handleChallengesManagement}
+                      className="w-full text-left px-3 py-2 rounded-md text-base font-medium bg-teal-600 hover:bg-teal-700 flex items-center"
                     >
                       <FaCog className="mr-2" /> Gestion Challenges
-                    </Link>
+                    </button>
                     <Link 
                       to="/admin/ratings" 
-                      className="block px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
+                      className=" px-3 py-2 rounded-md text-base font-medium hover:bg-purple-700 flex items-center"
                       onClick={closeMenu}
                     >
                       <FaStar className="mr-2" /> Notes Challengers
@@ -261,7 +269,7 @@ const Navbar = () => {
                 
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left block px-3 py-2 rounded-md text-base font-medium bg-red-600 hover:bg-red-700 flex items-center"
+                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium bg-red-600 hover:bg-red-700 flex items-center"
                 >
                   <FaSignOutAlt className="mr-2" /> Déconnexion
                 </button>
@@ -270,13 +278,13 @@ const Navbar = () => {
               <>
                 <button
                   onClick={handleLogin}
-                  className="w-full text-left block px-3 py-2 rounded-md text-base font-medium bg-green-600 hover:bg-green-700 flex items-center"
+                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium bg-green-600 hover:bg-green-700 flex items-center"
                 >
                   <FaSignInAlt className="mr-2" /> Connexion
                 </button>
                 <button
                   onClick={handleRegister}
-                  className="w-full text-left block px-3 py-2 rounded-md text-base font-medium bg-blue-600 hover:bg-blue-700 flex items-center"
+                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium bg-blue-600 hover:bg-blue-700 flex items-center"
                 >
                   <FaUserPlus className="mr-2" /> Inscription
                 </button>
