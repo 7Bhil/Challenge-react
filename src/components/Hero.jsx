@@ -2,7 +2,7 @@ const Hero = () => {
   return (
     <section className="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-20 px-4">
       <div className="container mx-auto max-w-4xl text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6">ChallengeHub</h1>
+        <h1 className="text-4xl md:text-5xl font-bold mb-6">Bhil<span className='text-5xl md:text-6xl text-red-600'>$</span></h1>
         <p className="text-xl mb-10 opacity-90">
           La plateforme ultime pour les développeurs qui aiment relever des défis techniques
         </p>
@@ -28,5 +28,7 @@ const Hero = () => {
     </section>
   );
 };
+                
+
 
 export default Hero;

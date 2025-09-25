@@ -202,9 +202,25 @@ const ChallengeDetail = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
+                
+                
+                <div className="mb-4">
+                  <label htmlFor="liveDemoUrl" className="block text-sm font-medium text-gray-700 mb-1">
+                    URL de la démo live 
+                  </label>
+                  <input
+                    type="url"
+                    id="liveDemoUrl"
+                    name="liveDemoUrl"
+                    value={submission.liveDemoUrl}
+                    onChange={handleInputChange}
+                    placeholder="https://votre-projet.vercel.app"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  />
+                </div>
                 <div className="mb-4">
                   <label htmlFor="repositoryUrl" className="block text-sm font-medium text-gray-700 mb-1">
-                    URL du dépôt Git *
+                    URL du dépôt Git *(optionnel)
                   </label>
                   <input
                     type="url"
@@ -217,22 +233,6 @@ const ChallengeDetail = () => {
                     required
                   />
                 </div>
-                
-                <div className="mb-4">
-                  <label htmlFor="liveDemoUrl" className="block text-sm font-medium text-gray-700 mb-1">
-                    URL de la démo live (optionnel)
-                  </label>
-                  <input
-                    type="url"
-                    id="liveDemoUrl"
-                    name="liveDemoUrl"
-                    value={submission.liveDemoUrl}
-                    onChange={handleInputChange}
-                    placeholder="https://votre-projet.vercel.app"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  />
-                </div>
-                
                 <div className="mb-6">
                   <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
                     Commentaires (optionnel)
@@ -266,7 +266,7 @@ const ChallengeDetail = () => {
                 </button>
                 
                 <p className="text-xs text-gray-500 mt-4">
-                  * Assurez-vous que votre dépôt est public et contient un README expliquant comment exécuter votre projet.
+                  * Assurez-vous que votre dépôt git est public et contient un README expliquant comment exécuter votre projet.
                 </p>
               </form>
             )}

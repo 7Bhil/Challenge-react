@@ -17,7 +17,7 @@ import {
   Rocket,
 } from "lucide-react";
 
-const Home = () => {
+const Homee = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [typedText, setTypedText] = useState("");
@@ -671,4 +671,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Homee;
