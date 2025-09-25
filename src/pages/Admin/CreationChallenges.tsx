@@ -19,6 +19,7 @@ const CreateChallenge = () => {
     });
   };
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Pour le moment, on affiche juste les données dans la console
