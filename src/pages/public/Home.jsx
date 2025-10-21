@@ -4,9 +4,9 @@ import Rankings from '../../components/Rankings';
 
 function Home() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Hero />
-      <ChallengesList />
+    <div className="min-h-screen bg-gray-900">
+  <Hero />
+        <ChallengesList />
       <Rankings />
     </div>
   );

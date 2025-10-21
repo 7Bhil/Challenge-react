@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import ChallengeCard from './ChallengeCard';
 import { Link } from 'react-router-dom';
-
 // Import direct du fichier JSON depuis src/data/
 import challengesData from '../data/challenge.js';
 
@@ -22,12 +21,12 @@ const ChallengesList = () => {
       } else {
         throw new Error('Format de données inattendu');
       }
-      
+
       // Filtrer pour n'afficher que les défis "en cours"
       const ongoingChallenges = challengesArray.filter(
         challenge => challenge.status === 'en cours'
       );
-      
+
       setChallenges(ongoingChallenges);
     } catch (error) {
       console.error('Erreur lors du traitement des défis:', error);
@@ -38,23 +37,24 @@ const ChallengesList = () => {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center py-10">
-          <p className="text-red-500 mb-4">Erreur: {error}</p>
+        <div className="text-center py-10 bg-gray-800/50 rounded-xl border border-red-500/30 backdrop-blur-sm">
+          <p className="text-red-400 mb-4">Erreur: {error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <section className="container mx-auto px-4 py-12">
+    <section className="container mx-auto px-4 py-12 bg-gray-900">
       <div className="flex justify-between items-center mb-10">
-        <h2 className="text-3xl font-bold text-purple-800">Défis en cours</h2>
-        
+        <h2 className="text-3xl font-bold text-gray-100">
+          Défis <span className="text-red-600">en cours</span>
+        </h2>
       </div>
-      
+
       {challenges.length === 0 ? (
-        <div className="text-center py-10 bg-white rounded-lg shadow">
-          <p className="text-gray-600">Aucun défi en cours pour le moment.</p>
+        <div className="text-center py-10 bg-gray-800/50 rounded-xl border border-gray-700 backdrop-blur-sm">
+          <p className="text-gray-300">Aucun défi en cours pour le moment.</p>
           <p className="text-gray-500 text-sm mt-2">Revenez bientôt pour découvrir de nouveaux défis!</p>
         </div>
       ) : (

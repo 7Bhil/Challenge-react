@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { User, Mail, Lock, Eye, EyeOff, LogIn, UserPlus, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -9,10 +11,10 @@ export default function Register() {
     name: '',
     email: '',
     password: '',
-    classe: 'L1',
     passion: 'DEV_FRONT'
   });
-
+const API_URL = import.meta.env.VITE_API_BASE_URL;
+const navigate = useNavigate();
   const handleRegister = async () => {
     setLoading(true);
     setMessage({ type: '', text: '' });
@@ -21,33 +23,42 @@ export default function Register() {
       // Ajouter le rôle CHALLENGER par défaut
       const dataToSend = {
         ...registerData,
-        role: 'CHALLENGER'
+        name: registerData.name,
+        role: 'Challenger'
       };
 
-      const response = await fetch('http://localhost:3001/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dataToSend),
-      });
+      const response = await axios.post(`${API_URL}/register`, dataToSend);
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Erreur lors de l\'inscription');
-      }
+
 
       setMessage({ 
         type: 'success', 
-        text: 'Inscription réussie ! Vous pouvez maintenant vous connecter.' 
+         text: response.data.message || 'Inscription réussie !'
       });
+      // 3. Redirection : Après 2 secondes, naviguer vers la page de connexion
+            setTimeout(() => {
+                navigate('/login'); // <-- L'action de redirection
+            }, 2000); // Délai optionnel pour laisser le message s'afficher
       
-    } catch (error) {
-      setMessage({ type: 'error', text: error.message });
+    }catch (error) {
+        let errorMessage = "Erreur inconnue.";
+        
+        if (error.response) {
+            // CASE 1: Server replied with 4xx or 5xx. This is a VALIDATION failure.
+            errorMessage = error.response.data.message || `Erreur du serveur (Statut ${error.response.status})`;
+        } else if (error.request) {
+            // CASE 2: Request sent, but NO response received (Server is OFFLINE or URL is wrong).
+            errorMessage = "Erreur de connexion : Le serveur est-il démarré sur le bon port (5000) ?";
+        } else {
+            // CASE 3: Client-side error.
+            errorMessage = error.message;
+        }
+
+        setMessage({ type: 'error', text: errorMessage });
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -134,25 +145,11 @@ export default function Register() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Classe
-                </label>
-                <select
-                  value={registerData.classe}
-                  onChange={(e) => setRegisterData({...registerData, classe: e.target.value})}
-                  className="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all"
-                >
-                  <option value="L1">L1</option>
-                  <option value="L2">L2</option>
-                  <option value="L3">L3</option>
-                  <option value="AUTRE">Autre</option>
-                </select>
-              </div>
+              
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Passion
+                    SPECIALITE
                 </label>
                 <select
                   value={registerData.passion}

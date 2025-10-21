@@ -41,14 +41,31 @@ const Navbar = () => {
 
   // Simuler la vérification de l'état de connexion et des privilèges admin
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const userRole = localStorage.getItem('userRole');
-    
+    const token = localStorage.getItem('token');
+    const userString = localStorage.getItem('user');
+    let role = null;
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        role = user.role;
+      } catch (e) {
+        console.error('Erreur lors de la lecture des informations utilisateur:', e);
+      }
+    }
     if (token) {
       setIsLoggedIn(true);
-      if (userRole === 'admin') {
+      // eslint-disable-next-line no-undef
+      setUserRole(role);
+      if (role === 'Superadmin' || role === 'Admin') {
         setIsAdmin(true);
+        // eslint-disable-next-line no-undef
+        setUserRole(role);
+      } else {
+        setIsAdmin(false);
       }
+    } else {
+      setIsLoggedIn(false);
+      setIsAdmin(false);
     }
   }, [location]);
 
@@ -71,8 +88,8 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userRole');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setIsLoggedIn(false);
     setIsAdmin(false);
     setIsMenuOpen(false);

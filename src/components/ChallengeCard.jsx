@@ -1,62 +1,78 @@
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom';
+
 const ChallengeCard = ({ challenge }) => {
   const getStatusColor = (status) => {
-    switch(status) {
-      case 'en cours': return 'bg-pink-100 text-pink-800';
-      case 'à venir': return 'bg-blue-100 text-blue-800';
-      case 'terminé': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+    switch (status) {
+      case 'en cours':
+        return 'bg-red-500/20 text-red-400 border border-red-500/50';
+      case 'à venir':
+        return 'bg-purple-500/20 text-purple-400 border border-purple-500/50';
+      case 'terminé':
+        return 'bg-gray-700/30 text-gray-300 border border-gray-600/50';
+      default:
+        return 'bg-gray-500/20 text-gray-400 border border-gray-500/50';
     }
   };
 
   const getDifficultyColor = (difficulty) => {
-    switch(difficulty) {
-      case 'facile': return 'text-green-600';
-      case 'moyenne': return 'text-yellow-600';
-      case 'difficile': return 'text-red-600';
-      default: return 'text-gray-600';
+    switch (difficulty) {
+      case 'facile':
+        return 'text-green-400';
+      case 'moyenne':
+        return 'text-yellow-400';
+      case 'difficile':
+        return 'text-red-400';
+      default:
+        return 'text-gray-400';
     }
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-lg overflow-hidden border border-gray-700 hover:border-purple-600 transition-all duration-300 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105">
       <div className="p-6">
+        {/* Titre + statut */}
         <div className="flex justify-between items-start mb-4">
-          <h3 className="text-xl font-bold text-purple-800">{challenge.title}</h3>
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(challenge.status)}`}>
+          <h3 className="text-xl font-bold text-purple-400">{challenge.title}</h3>
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getStatusColor(challenge.status)}`}
+          >
             {challenge.status}
           </span>
         </div>
-        
-        
+
+        {/* Informations principales */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <span className="text-sm font-medium text-purple-700">Début:</span>
-            <p>{challenge.start_date}</p>
+            <span className="text-sm font-medium text-purple-400">Début :</span>
+            <p className="text-gray-300 text-sm">{challenge.start_date}</p>
           </div>
           <div>
-            <span className="text-sm font-medium text-purple-700">Fin:</span>
-            <p>{challenge.end_date}</p>
+            <span className="text-sm font-medium text-purple-400">Fin :</span>
+            <p className="text-gray-300 text-sm">{challenge.end_date}</p>
           </div>
           <div>
-            <span className="text-sm font-medium text-purple-700">Difficulté:</span>
-            <p className={getDifficultyColor(challenge.difficulty)}>{challenge.difficulty}</p>
+            <span className="text-sm font-medium text-red-400">Difficulté :</span>
+            <p className={`font-semibold ${getDifficultyColor(challenge.difficulty)}`}>
+              {challenge.difficulty}
+            </p>
           </div>
           <div>
-            <span className="text-sm font-medium text-purple-700">Participants:</span>
-            <p>{challenge.participants.length}</p>
+            <span className="text-sm font-medium text-purple-400">Participants :</span>
+            <p className="text-gray-300 font-semibold">{challenge.participants.length}</p>
           </div>
         </div>
-        
+
+        {/* Tags (optionnel) */}
         <div className="flex flex-wrap gap-2 mb-4">
-          
+          {/* Placeholders pour des tags */}
         </div>
-        
+
+        {/* Bouton */}
         <Link to={`/challenge/${challenge.id}`}>
-  <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300">
-    Voir le défi
-  </button>
-</Link>
+          <button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] hover:scale-105">
+            Voir le défi
+          </button>
+        </Link>
       </div>
     </div>
   );
