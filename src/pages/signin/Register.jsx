@@ -27,7 +27,7 @@ const navigate = useNavigate();
         role: 'Challenger'
       };
 
-      const response = await axios.post(`${API_URL}/register`, dataToSend);
+      const response = await axios.post(`${API_URL}/users/register`, dataToSend);
 
 
 
