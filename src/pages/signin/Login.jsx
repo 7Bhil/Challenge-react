@@ -1,79 +1,76 @@
-import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft } from 'lucide-react';
-import axios from 'axios';
+import React, { useState } from "react";
+import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft } from "lucide-react";
+import axios from "axios";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
-  const [formData, setFormData] = useState({ 
-    email: '', 
-    password: '' 
+  const [message, setMessage] = useState({ type: "", text: "" });
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
   });
 
   const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleChange = (e) => {
-    setFormData({ 
-      ...formData, 
-      [e.target.name]: e.target.value 
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
-      setMessage({ 
-        type: 'error', 
-        text: 'Veuillez remplir tous les champs' 
+      setMessage({
+        type: "error",
+        text: "Veuillez remplir tous les champs",
       });
       return;
     }
 
     setLoading(true);
-    setMessage({ type: '', text: '' });
+    setMessage({ type: "", text: "" });
 
     try {
-      const response = await axios.post(
-        `${API_URL}/login`, 
-        formData,
-        { withCredentials: true }
-      );
+      const response = await axios.post(`${API_URL}/users/login`, formData, {
+        withCredentials: true,
+      });
 
       // Sauvegarder le token et user (optionnel)
       if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-      }
-      
-      if (response.data.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem("token", response.data.token);
       }
 
-      setMessage({ 
-        type: 'success', 
-        text: '✓ Connexion réussie ! Redirection...' 
+      if (response.data.user) {
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      }
+
+      setMessage({
+        type: "success",
+        text: "✓ Connexion réussie ! Redirection...",
       });
 
       // Redirection après 0.5 secondes vers la page d'accueil
       setTimeout(() => {
-        window.location.href = '/';
+        window.location.href = "/";
       }, 500);
-
     } catch (error) {
-      let errorMessage = 'Erreur de connexion';
-      
+      let errorMessage = "Erreur de connexion";
+
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 401) {
-        errorMessage = 'Email ou mot de passe incorrect';
+        errorMessage = "Email ou mot de passe incorrect";
       } else if (error.response?.status === 500) {
-        errorMessage = 'Erreur serveur, réessayez plus tard';
-      } else if (error.message === 'Network Error') {
-        errorMessage = 'Impossible de se connecter au serveur';
+        errorMessage = "Erreur serveur, réessayez plus tard";
+      } else if (error.message === "Network Error") {
+        errorMessage = "Impossible de se connecter au serveur";
       }
 
-      setMessage({ type: 'error', text: errorMessage });
+      setMessage({ type: "error", text: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -84,7 +81,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* Bouton retour */}
         <button
-          onClick={() => window.location.href = '/'}
+          onClick={() => (window.location.href = "/")}
           className="mb-6 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -98,21 +95,17 @@ export default function Login() {
             <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <LogIn className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Bon retour !
-            </h1>
-            <p className="text-gray-400">
-              Connectez-vous pour continuer
-            </p>
+            <h1 className="text-3xl font-bold text-white mb-2">Bon retour !</h1>
+            <p className="text-gray-400">Connectez-vous pour continuer</p>
           </div>
 
           {/* Message */}
           {message.text && (
-            <div 
+            <div
               className={`mb-6 p-4 rounded-lg border backdrop-blur-sm ${
-                message.type === 'success'
-                  ? 'bg-green-500/10 text-green-400 border-green-500/30'
-                  : 'bg-red-500/10 text-red-400 border-red-500/30'
+                message.type === "success"
+                  ? "bg-green-500/10 text-green-400 border-green-500/30"
+                  : "bg-red-500/10 text-red-400 border-red-500/30"
               }`}
             >
               {message.text}
@@ -166,10 +159,11 @@ export default function Login() {
                   disabled={loading}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors disabled:opacity-50"
                 >
-                  {showPassword ? 
-                    <EyeOff className="h-5 w-5" /> : 
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
                     <Eye className="h-5 w-5" />
-                  }
+                  )}
                 </button>
               </div>
             </div>
@@ -178,7 +172,7 @@ export default function Login() {
             <div className="flex justify-end">
               <button
                 type="button"
-                onClick={() => alert('Fonctionnalité à venir')}
+                onClick={() => alert("Fonctionnalité à venir")}
                 className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
               >
                 Mot de passe oublié ?
@@ -194,13 +188,25 @@ export default function Login() {
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
                   </svg>
                   Connexion en cours...
                 </span>
               ) : (
-                'Se connecter'
+                "Se connecter"
               )}
             </button>
           </form>
@@ -220,10 +226,10 @@ export default function Login() {
           {/* Register Link */}
           <div className="text-center">
             <button
-              onClick={() => window.location.href = '/register'}
+              onClick={() => (window.location.href = "/register")}
               className="text-gray-300 hover:text-white transition-colors"
             >
-              Créer un compte{' '}
+              Créer un compte{" "}
               <span className="text-blue-400 font-semibold">
                 gratuitement →
               </span>
@@ -233,7 +239,7 @@ export default function Login() {
 
         {/* Footer */}
         <p className="text-center text-gray-500 text-sm mt-6">
-          En vous connectant, vous acceptez nos{' '}
+          En vous connectant, vous acceptez nos{" "}
           <button className="text-gray-400 hover:text-gray-300 underline">
             conditions d'utilisation
           </button>

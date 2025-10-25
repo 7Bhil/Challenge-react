@@ -22,6 +22,7 @@ import {
   User,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -76,7 +77,6 @@ const Navbar = () => {
 
   const active = (path) => location.pathname === path;
 
-  // eslint-disable-next-line no-unused-vars
   const Item = ({ Icon, label, onClick, variant = "d" }) => {
     const variants = {
       d: "hover:bg-gray-800 text-gray-300 hover:text-white",
@@ -85,6 +85,7 @@ const Navbar = () => {
       s: "text-red-300 hover:bg-red-500/10 hover:text-white",
       r: "text-red-400 hover:bg-red-500/10 hover:text-white",
     };
+    Icon = Icon || LogOut;
     return (
       <button
         onClick={onClick}
