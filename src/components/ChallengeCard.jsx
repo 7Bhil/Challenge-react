@@ -33,9 +33,7 @@ const ChallengeCard = ({ challenge }) => {
         {/* Titre + statut */}
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-xl font-bold text-purple-400">{challenge.title}</h3>
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getStatusColor(challenge.status)}`}
-          >
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getStatusColor(challenge.status)}`}>
             {challenge.status}
           </span>
         </div>
@@ -44,11 +42,15 @@ const ChallengeCard = ({ challenge }) => {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <span className="text-sm font-medium text-purple-400">Début :</span>
-            <p className="text-gray-300 text-sm">{challenge.start_date}</p>
+            <p className="text-gray-300 text-sm">
+              {new Date(challenge.startDate).toLocaleDateString()}
+            </p>
           </div>
           <div>
             <span className="text-sm font-medium text-purple-400">Fin :</span>
-            <p className="text-gray-300 text-sm">{challenge.end_date}</p>
+            <p className="text-gray-300 text-sm">
+              {new Date(challenge.endDate).toLocaleDateString()}
+            </p>
           </div>
           <div>
             <span className="text-sm font-medium text-red-400">Difficulté :</span>
@@ -57,18 +59,22 @@ const ChallengeCard = ({ challenge }) => {
             </p>
           </div>
           <div>
-            <span className="text-sm font-medium text-purple-400">Participants :</span>
-            <p className="text-gray-300 font-semibold">{challenge.participants.length}</p>
+            <span className="text-sm font-medium text-purple-400">Technologies :</span>
+            <p className="text-gray-300 text-sm">
+              {challenge.technologies?.join(', ') || 'Aucune'}
+            </p>
           </div>
         </div>
 
-        {/* Tags (optionnel) */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {/* Placeholders pour des tags */}
+        {/* Description */}
+        <div className="mb-4">
+          <p className="text-gray-400 text-sm line-clamp-2">
+            {challenge.description}
+          </p>
         </div>
 
         {/* Bouton */}
-        <Link to={`/challenge/${challenge.id}`}>
+        <Link to={`/challenge/${challenge._id}`}>
           <button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] hover:scale-105">
             Voir le défi
           </button>

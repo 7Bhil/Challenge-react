@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import challengesData from '../data/challenge';
+import api from '../service/api'; // Import ton instance axios
 
 const ChallengeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [challenge, setChallenge] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [submission, setSubmission] = useState({
     repositoryUrl: '',
     comment: '',
@@ -15,14 +16,25 @@ const ChallengeDetail = () => {
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
   useEffect(() => {
-    // Trouver le défi correspondant à l'ID
-    const foundChallenge = challengesData.find(c => c.id === parseInt(id));
-    if (foundChallenge) {
-      setChallenge(foundChallenge);
-    } else {
+    fetchChallenge();
+  }, [id]);
+const fetchChallenge = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/challenges/${id}`);
+      
+      if (response.data.success) {
+        setChallenge(response.data.data);
+      } else {
+        navigate('/challenges', { replace: true });
+      }
+    } catch (error) {
+      console.error('Erreur chargement challenge:', error);
       navigate('/challenges', { replace: true });
+    } finally {
+      setLoading(false);
     }
-  }, [id, navigate]);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +59,15 @@ const ChallengeDetail = () => {
       setIsSubmitting(false);
     }
   };
-
+   if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700"></div>
+        </div>
+      </div>
+    );
+  }
   if (!challenge) {
     return (
       <div className="container mx-auto px-4 py-12">
@@ -81,7 +101,7 @@ const ChallengeDetail = () => {
   const participants = challenge.participants || [];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-10">
       {/* Breadcrumb */}
       <nav className="flex mb-6" aria-label="Breadcrumb">
         <ol className="inline-flex items-center space-x-1 md:space-x-3">

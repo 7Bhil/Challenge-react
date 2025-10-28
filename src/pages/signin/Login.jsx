@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft } from "lucide-react";
 import axios from "axios";
+import api from "../../service/api";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +36,7 @@ export default function Login() {
     setMessage({ type: "", text: "" });
 
     try {
-      const response = await axios.post(`${API_URL}/users/login`, formData, {
+      const response = await api.post(`/users/login`, formData, {
         withCredentials: true,
       });
 
@@ -46,6 +47,7 @@ export default function Login() {
 
       if (response.data.user) {
         localStorage.setItem("user", JSON.stringify(response.data.user));
+        api.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
       }
 
       setMessage({
