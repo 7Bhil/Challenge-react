@@ -27,21 +27,17 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem("token"));
   const dropRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Fake user
-  const user = {
-    username: "JohnDoe",
-    email: "john.doe@example.com",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-    level: 42,
-    points: 15750,
-    role: "Superadmin",
-    _id: "123456",
-  };
+  // Récupérer l'utilisateur réel depuis le localStorage
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  
+  // Si pas d'utilisateur mais token présent, on pourrait appeler checkAuth
+  // Mais pour l'instant on se fie au localStorage mis à jour au login
+
 
   // Scroll effect
   useEffect(() => {
@@ -62,18 +58,60 @@ const Navbar = () => {
   }, []);
 
   const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setLoggedIn(false);
     setDropdownOpen(false);
     setMenuOpen(false);
     navigate("/");
+    // Optionnel: recharger la page pour s'assurer que tout l'état global est propre
+    window.location.reload();
   };
 
-  const links = [
-    { path: "/", label: "Home", Icon: Home },
-    { path: "/challenges", label: "Challenges", Icon: Code },
-    { path: "/leaderboard", label: "Leaderboard", Icon: Trophy },
-    { path: "/community", label: "Community", Icon: Users },
-  ];
+  // Liens selon le rôle
+  const getLinks = () => {
+    const baseLinks = [
+      { path: "/", label: "Home", Icon: Home },
+      { path: "/challenges", label: "Challenges", Icon: Code },
+    ];
+
+    const role = user?.role;
+
+    if (role === 'Superadmin') {
+      return [
+        ...baseLinks,
+        { path: "/admin/users", label: "Gestion Users", Icon: Users },
+        { path: "/admin/validation", label: "Validation", Icon: Shield },
+        { path: "/leaderboard", label: "Leaderboard", Icon: Trophy },
+      ];
+    }
+
+    if (role === 'Admin') {
+      return [
+        ...baseLinks,
+        { path: "/admin/users", label: "Gestion Users", Icon: Users },
+        { path: "/creation-challenge", label: "Créer Challenge", Icon: Code },
+        { path: "/leaderboard", label: "Leaderboard", Icon: Trophy },
+      ];
+    }
+
+    if (role === 'Jury') {
+      return [
+        ...baseLinks,
+        { path: "/jury/submissions", label: "Notations", Icon: Star },
+        { path: "/leaderboard", label: "Leaderboard", Icon: Trophy },
+      ];
+    }
+
+    // Challenger (par défaut)
+    return [
+      ...baseLinks,
+      { path: "/leaderboard", label: "Leaderboard", Icon: Trophy },
+      { path: "/community", label: "Community", Icon: Users },
+    ];
+  };
+
+  const links = getLinks();
 
   const active = (path) => location.pathname === path;
 
@@ -175,13 +213,13 @@ const Navbar = () => {
                     className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-gray-800/50 text-gray-300 transition-all duration-200"
                   >
                     <div className="text-right text-sm leading-tight">
-                      <div className="font-medium">{user.username}</div>
+                      <div className="font-medium">{user.name || "Utilisateur"}</div>
                       <div className="text-xs text-gray-400">
-                        Lvl {user.level} • {user.points}pts
+                        Lvl {user.level || 1} • {user.points || 0}pts
                       </div>
                     </div>
                     <img
-                      src={user.avatar}
+                      src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name || 'User'}`}
                       alt="avatar"
                       className="w-8 h-8 rounded-full border border-gray-700"
                     />
@@ -197,13 +235,13 @@ const Navbar = () => {
                       <div className="px-4 py-3 bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700">
                         <div className="flex items-center gap-3">
                           <img
-                            src={user.avatar}
-                            alt={user.username}
+                            src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name || 'User'}`}
+                            alt={user.name}
                             className="w-12 h-12 rounded-full border-2 border-blue-500/40"
                           />
                           <div className="flex-1">
                             <div className="font-semibold text-white truncate">
-                              {user.username}
+                              {user.name}
                             </div>
                             <div className="text-xs text-blue-400 truncate">
                               {user.email}
@@ -216,7 +254,7 @@ const Navbar = () => {
                         <Item
                           Icon={User}
                           label="Profile"
-                          onClick={() => navigate(`/profile/${user._id}`)}
+                          onClick={() => navigate(`/profile/${user.id}`)}
                         />
                         <Item
                           Icon={Brain}

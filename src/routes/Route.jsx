@@ -10,7 +10,9 @@ import Homee from "../pages/Homee";
 import CreateChallenge from "../pages/Admin/CreationChallenges";
 import AdminChallenges from "../pages/Admin/GestionChallenges";
 import EditChallenge from "../pages/Admin/ModifChallenge";
+import UserManagement from "../pages/Admin/UserManagement";
 import SuperAdminChallenges from "../pages/SuperAdmin/AllChallenges";
+import ChallengeValidation from "../pages/SuperAdmin/ChallengeValidation";
 
 export default function AppRoutes() {
   return (
@@ -24,16 +26,17 @@ export default function AppRoutes() {
         <Route path="/profile/:userId" element={<Profil />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
+        {/* Admin Routes */}
         <Route path="/creation-challenge" element={<CreateChallenge />} />
-        <Route path="/gestion-challenge" element={<AdminChallenges />} />
+        <Route path="/admin/challenges" element={<AdminChallenges />} />
         <Route path="/edit-challenge/:id" element={<EditChallenge />} />
-        <Route
-          path="/super-gestion-challenge"
-          element={<SuperAdminChallenges />}
-        />
-        {/*        <Route path="/jury/submissions" element={<JurySubmission />} />
-       <Route path="/super-admin/users" element={<SuperAdminUsee />} />-*/}
+        
+        {/* SuperAdmin Routes */}
+        <Route path="/admin/users" element={<UserManagement />} />
+        <Route path="/admin/validation" element={<ChallengeValidation />} />
       </Routes>
+
     </>
   );
 }

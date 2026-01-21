@@ -36,7 +36,7 @@ export default function Login() {
     setMessage({ type: "", text: "" });
 
     try {
-      const response = await api.post(`/users/login`, formData, {
+      const response = await api.post(`/auth/login`, formData, {
         withCredentials: true,
       });
 

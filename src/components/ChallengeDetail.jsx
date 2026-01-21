@@ -101,7 +101,7 @@ const fetchChallenge = async () => {
   const participants = challenge.participants || [];
 
   return (
-    <div className="container mx-auto px-4 py-10">
+    <div className="container mx-auto px-4 py-8 mt-14">
       {/* Breadcrumb */}
       <nav className="flex mb-6" aria-label="Breadcrumb">
         <ol className="inline-flex items-center space-x-1 md:space-x-3">

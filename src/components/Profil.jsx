@@ -1,189 +1,235 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-
-// Import direct des données
-import usersData from '../data/user';
-import leaderboardData from '../data/leaderboard';
+import { userService, authService } from '../service/api';
+import { 
+  User, 
+  Mail, 
+  Trophy, 
+  Zap, 
+  Brain, 
+  Star, 
+  Calendar, 
+  ArrowLeft,
+  Settings,
+  Shield,
+  Rocket,
+  Flame,
+  Code
+} from 'lucide-react';
 
 const UserProfile = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
-  const [userRankings, setUserRankings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const currentUser = authService.getCurrentUser();
+  const isOwnProfile = currentUser && (currentUser.id === userId || currentUser._id === userId);
 
   useEffect(() => {
-    try {
-      // Charger les données utilisateurs
-      let usersArray = [];
-      if (Array.isArray(usersData)) {
-        usersArray = usersData;
-      } else if (usersData.users && Array.isArray(usersData.users)) {
-        usersArray = usersData.users;
-      } else {
-        throw new Error('Format de données utilisateur inattendu');
+    const fetchUserData = async () => {
+      setLoading(true);
+      try {
+        const response = await userService.getById(userId);
+        if (response.success) {
+          setUser(response.data);
+        } else {
+          throw new Error(response.message || 'Utilisateur non trouvé');
+        }
+      } catch (err) {
+        console.error('Erreur lors du chargement du profil:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const foundUser = usersArray.find(u => u.id === parseInt(userId));
-      if (!foundUser) throw new Error('Utilisateur non trouvé');
-      setUser(foundUser);
-
-      // Charger les classements liés à l'utilisateur
-      let rankingsArray = [];
-      if (Array.isArray(leaderboardData)) {
-        rankingsArray = leaderboardData;
-      } else if (leaderboardData.rankings && Array.isArray(leaderboardData.rankings)) {
-        rankingsArray = leaderboardData.rankings;
-      } else {
-        throw new Error('Format de données classement inattendu');
-      }
-
-      const userRankings = rankingsArray.filter(r => r.challenger_id === parseInt(userId));
-      setUserRankings(userRankings);
-
-    } catch (err) {
-      console.error('Erreur lors du chargement des données:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (userId) {
+      fetchUserData();
     }
   }, [userId]);
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-700"></div>
+      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+          <Brain className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-blue-400" />
         </div>
+        <p className="mt-4 text-gray-400 font-medium animate-pulse">Chargement du profil...</p>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !user) {
     return (
-      <div className="container mx-auto px-4 py-12">
-        <div className="text-center py-10">
-          <p className="text-red-500 mb-4">Erreur: {error}</p>
-          <Link to="/leaderboard" className="text-purple-600 hover:text-purple-800">
+      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4">
+        <div className="bg-red-500/10 border border-red-500/20 p-8 rounded-2xl text-center max-w-md">
+          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <User className="w-8 h-8 text-red-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-2">Oups !</h2>
+          <p className="text-gray-400 mb-6">{error || 'Utilisateur non trouvé'}</p>
+          <Link 
+            to="/leaderboard" 
+            className="inline-flex items-center gap-2 px-6 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-xl transition-all"
+          >
+            <ArrowLeft className="w-4 h-4" />
             Retour au classement
           </Link>
-         
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <Link 
-          to="/leaderboard" 
-          className="text-purple-600 hover:text-purple-800 font-medium flex items-center"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-          </svg>
-          Retour au classement
-        </Link>
-         <Link to="/" className="text-red-600 hover:text-purple-800">
-            Retour a l'acceuil
+    <div className="min-h-screen bg-gray-950 text-white pb-12 pt-24">
+      <div className="max-w-6xl mx-auto px-5">
+        {/* Header Navigation */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <Link 
+            to="/leaderboard" 
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
+          >
+            <div className="p-2 bg-gray-900 rounded-lg group-hover:bg-gray-800 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+            </div>
+            <span className="font-medium">Retour au classement</span>
           </Link>
-      </div>
+          
+          {isOwnProfile && (
+            <Link 
+              to="/settings" 
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-xl border border-blue-500/20 transition-all font-medium"
+            >
+              <Settings className="w-4 h-4" />
+              Modifier mon profil
+            </Link>
+          )}
+        </div>
 
-      {/* En-tête du profil */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <div className="flex items-center space-x-6">
-          <div className="h-24 w-24 bg-purple-100 rounded-full flex items-center justify-center">
-            <span className="text-2xl font-bold text-purple-800">
-              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-            </span>
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">{user.name || `Utilisateur #${user.id}`}</h1>
-            <p className="text-gray-600">{user.email || 'Email non disponible'}</p>
-            <div className="flex space-x-4 mt-2">
-              {user.skills && user.skills.length > 0 && (
-                <div>
-                  <span className="text-sm font-medium text-gray-500">Compétences:</span>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {user.skills.map((skill, index) => (
-                      <span key={index} className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
-                        {skill}
-                      </span>
-                    ))}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Main User Card (Left/Top) */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="bg-gray-900/50 border border-gray-800 rounded-3xl p-8 sticky top-24">
+              <div className="relative mb-6 group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
+                <img 
+                  src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} 
+                  alt={user.name} 
+                  className="relative w-32 h-32 rounded-full mx-auto border-4 border-gray-900 shadow-2xl "
+                />
+                <div className="absolute bottom-0 right-1/2 translate-x-16 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-gray-900">
+                  Lvl {user.level || 1}
+                </div>
+              </div>
+
+              <div className="text-center mb-8">
+                <h1 className="text-2xl font-bold mb-1">{user.name}</h1>
+                <div className="flex items-center justify-center gap-2 text-blue-400 text-sm font-medium mb-3">
+                  <Shield className="w-3 h-3" />
+                  <span className="uppercase tracking-wider">{user.role}</span>
+                </div>
+                <p className="text-gray-400 text-sm leading-relaxed italic">
+                  "{user.passion || 'Passionné de technologie et de développement'}"
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-3 bg-gray-950/50 rounded-2xl border border-gray-800/50">
+                  <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-400">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Email</div>
+                    <div className="text-sm truncate max-w-[180px]">{user.email}</div>
                   </div>
                 </div>
-              )}
+
+                <div className="flex items-center gap-3 p-3 bg-gray-950/50 rounded-2xl border border-gray-800/50">
+                  <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-400">
+                    <Trophy className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Points Totaux</div>
+                    <div className="text-sm font-bold text-white">{user.points || 0} pts</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 bg-gray-950/50 rounded-2xl border border-gray-800/50">
+                  <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-400">
+                    <Flame className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Streak Actuel</div>
+                    <div className="text-sm font-bold text-white">{user.streak || 0} jours</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* User Stats & History (Right) */}
+          <div className="lg:col-span-8 space-y-6">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {[
+                { label: 'Défis Relevés', value: '12', icon: Code, color: 'blue' },
+                { label: 'Solutions Approuvées', value: '8', icon: Rocket, color: 'purple' },
+                { label: 'Rang Global', value: '#15', icon: Trophy, color: 'orange' },
+              ].map((stat, i) => (
+                <div key={i} className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl relative overflow-hidden group">
+                   <div className={`absolute -right-4 -bottom-4 w-20 h-20 bg-${stat.color}-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`}></div>
+                  <stat.icon className={`w-5 h-5 text-${stat.color}-400 mb-4`} />
+                  <div className="text-3xl font-bold mb-1">{stat.value}</div>
+                  <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Participation History Placeholder */}
+            <div className="bg-gray-900/50 border border-gray-800 rounded-3xl overflow-hidden">
+              <div className="p-6 border-b border-gray-800 flex items-center justify-between">
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-blue-400" />
+                  Historique des participations
+                </h2>
+                <div className="text-xs text-gray-500 font-medium">Bientôt disponible</div>
+              </div>
+              
+              <div className="p-12 text-center">
+                <div className="w-20 h-20 bg-gray-950 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-800">
+                  <Star className="w-8 h-8 text-gray-700" />
+                </div>
+                <h3 className="text-white font-bold mb-2">Pas encore d'activité publique</h3>
+                <p className="text-gray-500 text-sm max-w-xs mx-auto leading-relaxed">
+                  L'historique détaillé des challenges et des soumissions sera disponible très prochainement.
+                </p>
+                <Link to="/challenges" className="inline-flex mt-6 text-sm font-bold text-blue-400 hover:text-blue-300 transition-colors">
+                  Parcourir les challenges →
+                </Link>
+              </div>
+            </div>
+            
+            {/* Badges/Achievements Placeholder */}
+            <div className="bg-gray-900/50 border border-gray-800 rounded-3xl p-6">
+               <h2 className="text-lg font-bold flex items-center gap-2 mb-6">
+                  <Zap className="w-5 h-5 text-yellow-400" />
+                  Badges & Succès
+                </h2>
+                <div className="flex flex-wrap gap-4 opacity-50 grayscale">
+                  {[1, 2, 3, 4, 5].map(b => (
+                    <div key={b} className="w-12 h-12 bg-gray-950 rounded-2xl border border-gray-800 flex items-center justify-center">
+                      <Brain className="w-6 h-6 text-gray-700" />
+                    </div>
+                  ))}
+                </div>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Statistiques */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Meilleur score</h3>
-          <p className="text-3xl font-bold text-purple-600">
-            {userRankings.length > 0 ? Math.max(...userRankings.map(r => r.score)) : 0}/20
-          </p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Défis complétés</h3>
-          <p className="text-3xl font-bold text-purple-600">{userRankings.length}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Rang général moyen</h3>
-          <p className="text-3xl font-bold text-purple-600">
-            {userRankings.length > 0 
-              ? `#${Math.round(userRankings.reduce((sum, r) => sum + r.general_rank, 0) / userRankings.length)}` 
-              : 'N/A'
-            }
-          </p>
-        </div>
-      </div>
-
-      {/* Historique des participations */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">Historique des participations</h2>
-        </div>
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Défi</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rang</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {userRankings.map((ranking) => (
-              <tr key={ranking.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  Défi #{ranking.challenge_id}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                  {ranking.score}/20
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  #{ranking.rank}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(ranking.submission_date).toLocaleDateString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        
-        {userRankings.length === 0 && (
-          <div className="text-center py-10">
-            <p className="text-gray-600">Aucune participation enregistrée.</p>
-          </div>
-        )}
       </div>
     </div>
   );
 };
 
 export default UserProfile;
+

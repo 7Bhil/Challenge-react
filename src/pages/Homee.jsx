@@ -16,12 +16,15 @@ import {
   Coffee,
   Rocket,
 } from "lucide-react";
+import { challengeService } from "../service/api";
 
 const Homee = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [typedText, setTypedText] = useState("");
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [activeChallenges, setActiveChallenges] = useState([]);
+  const [error, setError] = useState(null);
 
   const codeWords = [
     "React",
@@ -32,59 +35,61 @@ const Homee = () => {
     "Rust",
   ];
 
-  // Animation de typing pour le hero
+  // Charger les challenges depuis l'API
   useEffect(() => {
-    const word = codeWords[currentWordIndex];
-    let currentIndex = 0;
-    const typingInterval = setInterval(() => {
-      if (currentIndex <= word.length) {
-        setTypedText(word.slice(0, currentIndex));
-        currentIndex++;
-      } else {
-        clearInterval(typingInterval);
-        setTimeout(() => {
-          setCurrentWordIndex((prev) => (prev + 1) % codeWords.length);
-        }, 2000);
+    const fetchChallenges = async () => {
+      try {
+        const response = await challengeService.getAll();
+        if (response.success && response.data) {
+          // Mapper les challenges de l'API au format attendu par le composant
+          const mappedChallenges = response.data.map((challenge) => ({
+            id: challenge._id,
+            title: challenge.title,
+            description: challenge.description,
+            difficulty: challenge.difficulty,
+            participants: Math.floor(Math.random() * 200) + 50, // Temporaire
+            timeLeft: calculateTimeLeft(challenge.endDate),
+            featured: challenge.status === 'active',
+            tags: challenge.technologies || [],
+            prize: "À définir", // Temporaire
+            language: determineChallengeType(challenge.technologies),
+          }));
+          setActiveChallenges(mappedChallenges);
+        }
+      } catch (err) {
+        console.error('Erreur lors du chargement des challenges:', err);
+        setError(err.message);
+        // Fallback sur des données par défaut en cas d'erreur
+        setActiveChallenges(getDefaultChallenges());
+      } finally {
+        setIsLoading(false);
       }
-    }, 150);
+    };
 
-    return () => clearInterval(typingInterval);
-  }, [currentWordIndex]);
+    fetchChallenges();
+  }, []);
 
-  const newsSlides = [
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=600&fit=crop",
-      title: "Challenge Full-Stack Winners",
-      description:
-        "3 devs ont créé des apps révolutionnaires avec des stacks modernes. Découvrez leurs solutions créatives.",
-      date: "2 days ago",
-      category: "Winners",
-    },
-    {
-      id: 2,
-      image:
-        "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=1200&h=600&fit=crop",
-      title: "New: AI/ML Challenge",
-      description:
-        "Construisez un modèle d'IA qui prédit les tendances tech. TensorFlow, PyTorch, toutes les libs autorisées.",
-      date: "5 days ago",
-      category: "New Challenge",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=1200&h=600&fit=crop",
-      title: "Dev Meetup: Code Review",
-      description:
-        "Session live avec nos senior devs. Code review, tips, et Q&A sur vos projets de challenge.",
-      date: "1 week ago",
-      category: "Community",
-    },
-  ];
+  // Fonction helper pour calculer le temps restant
+  const calculateTimeLeft = (endDate) => {
+    const end = new Date(endDate);
+    const now = new Date();
+    const diff = end - now;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    return days > 0 ? `${days}d` : 'Terminé';
+  };
 
-  const activeChallenges = [
+  // Fonction helper pour déterminer le type de challenge
+  const determineChallengeType = (technologies) => {
+    if (!technologies || technologies.length === 0) return 'Full-Stack';
+    const tech = technologies.join(' ').toLowerCase();
+    if (tech.includes('react') || tech.includes('vue') || tech.includes('angular')) return 'Frontend';
+    if (tech.includes('node') || tech.includes('express') || tech.includes('django')) return 'Backend';
+    if (tech.includes('rust') || tech.includes('go') || tech.includes('c++')) return 'Systems';
+    return 'Full-Stack';
+  };
+
+  // Challenges par défaut en cas d'erreur API
+  const getDefaultChallenges = () => [
     {
       id: 1,
       title: "Real-time Chat App",
@@ -139,6 +144,58 @@ const Homee = () => {
     },
   ];
 
+  // Animation de typing pour le hero
+  useEffect(() => {
+    const word = codeWords[currentWordIndex];
+    let currentIndex = 0;
+    const typingInterval = setInterval(() => {
+      if (currentIndex <= word.length) {
+        setTypedText(word.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+        setTimeout(() => {
+          setCurrentWordIndex((prev) => (prev + 1) % codeWords.length);
+        }, 2000);
+      }
+    }, 150);
+
+    return () => clearInterval(typingInterval);
+  }, [currentWordIndex]);
+
+  const newsSlides = [
+    {
+      id: 1,
+      image:
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=600&fit=crop",
+      title: "Challenge Full-Stack Winners",
+      description:
+        "3 devs ont créé des apps révolutionnaires avec des stacks modernes. Découvrez leurs solutions créatives.",
+      date: "2 days ago",
+      category: "Winners",
+    },
+    {
+      id: 2,
+      image:
+        "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=1200&h=600&fit=crop",
+      title: "New: AI/ML Challenge",
+      description:
+        "Construisez un modèle d'IA qui prédit les tendances tech. TensorFlow, PyTorch, toutes les libs autorisées.",
+      date: "5 days ago",
+      category: "New Challenge",
+    },
+    {
+      id: 3,
+      image:
+        "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=1200&h=600&fit=crop",
+      title: "Dev Meetup: Code Review",
+      description:
+        "Session live avec nos senior devs. Code review, tips, et Q&A sur vos projets de challenge.",
+      date: "1 week ago",
+      category: "Community",
+    },
+  ];
+
   const teamMembers = [
     {
       name: "Alex Chen",
@@ -179,8 +236,10 @@ const Homee = () => {
       case "Expert":
         return "bg-red-500/10 text-red-400 border-red-500/20";
       case "Intermediate":
+      case "Moyen":
         return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
       case "Beginner":
+      case "Facile":
         return "bg-green-500/10 text-green-400 border-green-500/20";
       default:
         return "bg-gray-500/10 text-gray-400 border-gray-500/20";
@@ -211,11 +270,9 @@ const Homee = () => {
 
   useEffect(() => {
     const timer = setInterval(nextSlide, 6000);
-    const loadTimer = setTimeout(() => setIsLoading(false), 800);
 
     return () => {
       clearInterval(timer);
-      clearTimeout(loadTimer);
     };
   }, []);
 
