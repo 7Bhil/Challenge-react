@@ -19,7 +19,7 @@ const Footer = () => {
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-gray-950 animate-pulse" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                DevChallenge
+                Bhil$ DevChallenge
               </span>
             </Link>
             <p className="text-sm">

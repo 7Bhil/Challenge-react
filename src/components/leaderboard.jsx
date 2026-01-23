@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { userService } from '../service/api';
+import { userService, getRoleAvatar } from '../service/api';
 import { 
   Trophy, 
   ArrowLeft, 
@@ -95,7 +95,11 @@ const Leaderboard = () => {
                 {i === 0 && <Star className="absolute top-4 right-4 w-6 h-6 text-yellow-500/20" />}
                 <div className="flex flex-col items-center text-center">
                    <div className="relative mb-4">
-                      <img src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} className="w-20 h-20 rounded-full border-2 border-gray-800" alt={user.name} />
+                       <img 
+                         src={getRoleAvatar(user)} 
+                         className="w-20 h-20 rounded-full border-2 border-gray-800 shadow-lg" 
+                         alt={user.name} 
+                       />
                       <div className={`absolute -bottom-2 right-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ring-4 ring-gray-950 ${i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-300 text-black' : 'bg-orange-600 text-white'}`}>
                         {i + 1}
                       </div>
@@ -129,11 +133,11 @@ const Leaderboard = () => {
                   </td>
                   <td className="px-6 py-4">
                     <Link to={`/profile/${user._id}`} className="flex items-center gap-3 group/user">
-                      <img 
-                        src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} 
-                        className="w-10 h-10 rounded-full border border-gray-800 group-hover/user:border-purple-500/50 transition-colors"
-                        alt={user.name} 
-                      />
+                       <img 
+                         src={getRoleAvatar(user)} 
+                         className="w-10 h-10 rounded-full border border-gray-800 group-hover/user:border-purple-500/50 transition-all shadow-sm"
+                         alt={user.name} 
+                       />
                       <div>
                         <div className="font-bold text-white group-hover/user:text-purple-400 transition-colors">{user.name}</div>
                         <div className="text-xs text-gray-500 flex items-center gap-1.5">

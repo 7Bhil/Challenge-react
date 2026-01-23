@@ -1,83 +1,89 @@
 import { Link } from 'react-router-dom';
+import { 
+  Calendar, 
+  Users, 
+  Trophy, 
+  ChevronRight, 
+  Clock,
+  Sparkles
+} from 'lucide-react';
 
 const ChallengeCard = ({ challenge }) => {
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'en cours':
-        return 'bg-red-500/20 text-red-400 border border-red-500/50';
-      case 'à venir':
-        return 'bg-purple-500/20 text-purple-400 border border-purple-500/50';
-      case 'terminé':
-        return 'bg-gray-700/30 text-gray-300 border border-gray-600/50';
-      default:
-        return 'bg-gray-500/20 text-gray-400 border border-gray-500/50';
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty?.toLowerCase()) {
+      case 'facile': return 'text-green-400 bg-green-400/10 border-green-400/20';
+      case 'moyen': return 'text-blue-400 bg-blue-400/10 border-blue-400/20';
+      case 'difficile': return 'text-red-400 bg-red-400/10 border-red-400/20';
+      default: return 'text-gray-400 bg-gray-400/10 border-gray-400/20';
     }
   };
 
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case 'facile':
-        return 'text-green-400';
-      case 'moyenne':
-        return 'text-yellow-400';
-      case 'difficile':
-        return 'text-red-400';
-      default:
-        return 'text-gray-400';
-    }
-  };
+  const isNew = new Date(challenge.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
   return (
-    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-lg overflow-hidden border border-gray-700 hover:border-purple-600 transition-all duration-300 hover:shadow-[0_0_30px_rgba(147,51,234,0.3)] hover:scale-105">
-      <div className="p-6">
-        {/* Titre + statut */}
-        <div className="flex justify-between items-start mb-4">
-          <h3 className="text-xl font-bold text-purple-400">{challenge.title}</h3>
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getStatusColor(challenge.status)}`}>
-            {challenge.status}
+    <div className="group relative bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-3xl overflow-hidden hover:border-blue-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
+      {/* Glow Effect */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-0 group-hover:opacity-10 transition duration-500" />
+      
+      <div className="relative p-8">
+        {/* Status & Badge */}
+        <div className="flex justify-between items-center mb-6">
+          <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${getDifficultyColor(challenge.difficulty)}`}>
+            {challenge.difficulty}
           </span>
+          {isNew && (
+            <div className="flex items-center gap-1 text-yellow-400">
+              <Sparkles className="w-3.5 h-3.5 fill-current" />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Nouveau</span>
+            </div>
+          )}
         </div>
 
-        {/* Informations principales */}
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <span className="text-sm font-medium text-purple-400">Début :</span>
-            <p className="text-gray-300 text-sm">
-              {new Date(challenge.startDate).toLocaleDateString()}
-            </p>
+        {/* Content */}
+        <h3 className="text-2xl font-bold mb-3 group-hover:text-blue-400 transition-colors leading-tight">
+          {challenge.title}
+        </h3>
+        <p className="text-gray-400 text-sm leading-relaxed mb-8 line-clamp-2">
+          {challenge.description}
+        </p>
+
+        {/* Features */}
+        <div className="grid grid-cols-2 gap-y-4 gap-x-6 mb-8 border-t border-gray-800 pt-6">
+          <div className="flex items-center gap-3 text-gray-500">
+            <Users className="w-4 h-4 text-blue-500" />
+            <div className="flex flex-col">
+              <span className="text-[10px] uppercase tracking-tighter font-bold">Participants</span>
+              <span className="text-xs text-gray-300 font-mono">{challenge.participantCount || 0}</span>
+            </div>
           </div>
-          <div>
-            <span className="text-sm font-medium text-purple-400">Fin :</span>
-            <p className="text-gray-300 text-sm">
-              {new Date(challenge.endDate).toLocaleDateString()}
-            </p>
+          <div className="flex items-center gap-3 text-gray-500">
+            <Calendar className="w-4 h-4 text-purple-500" />
+            <div className="flex flex-col">
+              <span className="text-[10px] uppercase tracking-tighter font-bold">Deadline</span>
+              <span className="text-xs text-gray-300 font-mono">
+                {new Date(challenge.endDate).toLocaleDateString()}
+              </span>
+            </div>
           </div>
-          <div>
-            <span className="text-sm font-medium text-red-400">Difficulté :</span>
-            <p className={`font-semibold ${getDifficultyColor(challenge.difficulty)}`}>
-              {challenge.difficulty}
-            </p>
-          </div>
-          <div>
-            <span className="text-sm font-medium text-purple-400">Technologies :</span>
-            <p className="text-gray-300 text-sm">
-              {challenge.technologies?.join(', ') || 'Aucune'}
-            </p>
+          <div className="flex items-center gap-3 text-gray-500 col-span-2">
+            <Trophy className="w-4 h-4 text-yellow-500" />
+            <div className="flex flex-col">
+              <span className="text-[10px] uppercase tracking-tighter font-bold">Récompense</span>
+              <span className="text-xs text-gray-300 font-bold tracking-tight">
+                {challenge.xpPoints || 0} XP
+                {challenge.financialReward > 0 && ` & ${challenge.financialReward.toLocaleString()} FCFA`}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Description */}
-        <div className="mb-4">
-          <p className="text-gray-400 text-sm line-clamp-2">
-            {challenge.description}
-          </p>
-        </div>
-
-        {/* Bouton */}
-        <Link to={`/challenge/${challenge._id}`}>
-          <button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] hover:scale-105">
-            Voir le défi
-          </button>
+        {/* Action */}
+        <Link 
+          to={`/challenge/${challenge._id}`}
+          className="flex items-center justify-center gap-2 w-full py-4 bg-gray-800 hover:bg-blue-600 text-white rounded-2xl font-bold transition-all group/btn shadow-inner"
+        >
+          Rejoindre l'arène
+          <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </Link>
       </div>
     </div>

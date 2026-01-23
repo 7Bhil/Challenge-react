@@ -29,7 +29,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Éviter la redirection si on est déjà sur la page de login ou si c'est une erreur de login
+    const isLoginRequest = error.config?.url?.includes('/auth/login');
+    const isLoginPage = window.location.pathname === '/login';
+
+    if (error.response?.status === 401 && !isLoginRequest && !isLoginPage) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
@@ -229,6 +233,21 @@ export const adminService = {
 };
 
 // Fonction helper pour définir le token (rétrocompatibilité)
+// Fonction helper pour obtenir l'avatar basé sur le rôle
+export const getRoleAvatar = (user) => {
+  if (!user) return `https://api.dicebear.com/7.x/bottts/svg?seed=guest`;
+  
+  const roleColors = {
+    'Superadmin': '7c3aed', // Violet/Or (on part sur Violet vif)
+    'Admin': '2563eb',      // Bleu
+    'Jury': '16a34a',       // Vert
+    'Challenger': '4b5563'  // Gris
+  };
+
+  const backgroundColor = roleColors[user.role] || '4b5563';
+  return `https://api.dicebear.com/7.x/bottts/svg?seed=${user.name}&backgroundColor=${backgroundColor}`;
+};
+
 export const setAuthToken = (token) => {
   if (token) {
     localStorage.setItem('token', token);

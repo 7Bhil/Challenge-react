@@ -8,7 +8,9 @@ const ChallengeForm = ({ initialData = {}, onSubmit, onCancel, isEdit = false })
     startDate: '',
     endDate: '',
     difficulty: 'medium',
-    technologies: ''
+    technologies: '',
+    xpPoints: 0,
+    financialReward: 0
   });
 
   const [errors, setErrors] = useState({});
@@ -22,7 +24,9 @@ const ChallengeForm = ({ initialData = {}, onSubmit, onCancel, isEdit = false })
         startDate: initialData.startDate || '',
         endDate: initialData.endDate || '',
         difficulty: initialData.difficulty || 'medium',
-        technologies: initialData.technologies || ''
+        technologies: initialData.technologies || '',
+        xpPoints: initialData.xpPoints || 0,
+        financialReward: initialData.financialReward || 0
       });
     }
   }, [initialData, isEdit]);
@@ -216,6 +220,47 @@ const ChallengeForm = ({ initialData = {}, onSubmit, onCancel, isEdit = false })
           <p className="text-xs text-gray-500 mt-1">
             Séparez les technologies par des virgules
           </p>
+        </div>
+
+        {/* Récompenses */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+           <div className="col-span-1 md:col-span-2">
+              <h3 className="text-lg font-semibold text-gray-700 flex items-center">
+                 Récompenses
+              </h3>
+           </div>
+           
+           <div>
+              <label htmlFor="xpPoints" className="block text-sm font-medium text-gray-700 mb-1">
+                 Points d'XP
+              </label>
+              <input
+                type="number"
+                id="xpPoints"
+                name="xpPoints"
+                min="0"
+                value={formData.xpPoints}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+           </div>
+
+           <div>
+              <label htmlFor="financialReward" className="block text-sm font-medium text-gray-700 mb-1">
+                 Récompense (FCFA)
+              </label>
+              <input
+                type="number"
+                id="financialReward"
+                name="financialReward"
+                min="0"
+                step="500"
+                value={formData.financialReward}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="0"
+              />
+           </div>
         </div>
 
         {/* Boutons */}

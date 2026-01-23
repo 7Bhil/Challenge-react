@@ -1,13 +1,54 @@
-# React + Vite
+# Challenge Platform - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+L'interface utilisateur moderne et dynamique de la plateforme de challenges, construite avec React et Vite.
 
-Currently, two official plugins are available:
+## 🚀 Technologies utilisées
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** : Bibliothèque frontend.
+- **Vite** : Outil de build ultra-rapide.
+- **Tailwind CSS** : Framework CSS utilitaire pour le design.
+- **Lucide React** & **React Icons** : Bibliothèques d'icônes.
+- **Axios** : Client HTTP pour communiquer avec l'API.
+- **React Router Dom** : Gestion de la navigation.
 
-## Expanding the ESLint configuration
+## 📁 Structure du projet
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# Challenge-react
+```text
+client/
+├── src/
+│   ├── components/ # Composants réutilisables (Navbar, Cards, Forms)
+│   ├── pages/      # Pages complètes (Home, Challenges, Admin)
+│   ├── service/    # Instance Axios et appels API
+│   ├── routes/     # Configuration du routage
+│   ├── App.jsx     # Composant racine
+│   └── main.jsx    # Point d'entrée
+├── public/         # Assets statiques
+└── tailwind.config.js # Configuration Tailwind
+```
+
+## ⚙️ Installation
+
+1. Accédez au dossier client :
+   ```bash
+   cd client
+   ```
+2. Installez les dépendances :
+   ```bash
+   npm install
+   ```
+3. Créez un fichier `.env` si nécessaire :
+   ```env
+   VITE_API_URL=http://localhost:5000/api
+   ```
+4. Lancez l'application en mode développement :
+   ```bash
+   npm run dev
+   ```
+
+## ✨ Fonctionnalités clés
+
+- **Mode Sombre** : Design premium et futuriste.
+- **Tableau de Bord** : Vue d'ensemble des stats et challenges.
+- **Classement (Leaderboard)** : Gamification en temps réel.
+- **Notation Jury** : Interface dédiée pour évaluer les projets.
+- **Filtres de Deadline** : Masquage automatique des challenges expirés.

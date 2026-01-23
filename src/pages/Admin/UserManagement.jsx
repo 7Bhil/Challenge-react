@@ -13,7 +13,7 @@ import {
   XCircle,
   AlertTriangle
 } from "lucide-react";
-import { userService, adminService } from "../../service/api";
+import { userService, adminService, getRoleAvatar } from "../../service/api";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -92,6 +92,8 @@ const UserManagement = () => {
     );
   }
 
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+
   return (
     <div className="min-h-screen bg-gray-950 text-white pb-12 pt-24">
       <div className="max-w-7xl mx-auto px-5">
@@ -133,8 +135,8 @@ const UserManagement = () => {
           </div>
         </div>
 
-        <div className="bg-gray-900/50 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl">
-          <div className="overflow-x-auto">
+        <div className="bg-gray-900/50 border border-gray-800 rounded-3xl shadow-2xl relative">
+          <div className="overflow-x-auto rounded-3xl">
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-gray-900/80 border-b border-gray-800">
@@ -145,16 +147,26 @@ const UserManagement = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800/50">
-                {filteredUsers.length > 0 ? filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-800/30 transition-colors group">
+                {filteredUsers.length > 0 ? filteredUsers.map((user) => {
+                  const isSelf = user._id === currentUser.id;
+                  const isAdminAttemptingSAMod = currentUser.role === 'Admin' && user.role === 'Superadmin';
+                  const canModify = !isSelf && !isAdminAttemptingSAMod;
+                  
+                  return (
+                  <tr key={user._id} className={`hover:bg-gray-800/30 transition-colors group ${isSelf ? 'bg-purple-500/5' : ''}`}>
                     <td className="px-6 py-4">
+                      {/* ... user info ... */}
                       <div className="flex items-center gap-3">
                         <img 
-                          src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} 
+                          src={getRoleAvatar(user)} 
                           className="w-10 h-10 rounded-full border border-gray-800"
+                          alt={user.name}
                         />
                         <div>
-                          <div className="font-bold text-white group-hover:text-purple-400 transition-colors">{user.name}</div>
+                          <div className="font-bold text-white group-hover:text-purple-400 transition-colors">
+                            {user.name}
+                            {isSelf && <span className="ml-2 text-[10px] bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Vous</span>}
+                          </div>
                           <div className="text-xs text-gray-500">{user.email}</div>
                         </div>
                       </div>
@@ -174,40 +186,49 @@ const UserManagement = () => {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                          <div className="relative group/menu">
-                            <button className="p-2 hover:bg-gray-800 rounded-lg text-gray-500 hover:text-white transition-all">
+                            <button 
+                              disabled={!canModify}
+                              className={`p-2 rounded-lg transition-all ${!canModify ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-800 text-gray-500 hover:text-white'}`}
+                            >
                               <MoreVertical className="w-5 h-5" />
                             </button>
-                            <div className="absolute right-0 bottom-full mb-2 w-48 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-10 p-2">
-                               <div className="text-[10px] text-gray-500 font-bold px-3 py-2 uppercase tracking-widest border-b border-gray-800 mb-2">Changer le rôle</div>
-                               {[
-                                 { role: 'Challenger', label: 'Challenger', icon: UserIcon },
-                                 { role: 'Jury', label: 'Jury', icon: Shield },
-                                 { role: 'Admin', label: 'Admin', icon: ShieldCheck },
-                                 { role: 'Superadmin', label: 'Superadmin', icon: ShieldAlert },
-                               ].map((item) => (
-                                 <button
-                                   key={item.role}
-                                   onClick={() => handleRoleChange(user._id, item.role)}
-                                   disabled={actionLoading === user._id || user.role === item.role}
-                                   className={`flex items-center gap-3 w-full px-3 py-2 text-xs rounded-lg transition-colors ${
-                                     user.role === item.role 
-                                     ? 'bg-purple-500/20 text-purple-400 cursor-default' 
-                                     : 'hover:bg-gray-800 text-gray-400 hover:text-white'
-                                   }`}
-                                 >
-                                   <item.icon className="w-3.5 h-3.5" />
-                                   {item.label}
-                                 </button>
-                               ))}
-                            </div>
+                            {!isSelf && (
+                              <div className="absolute right-0 top-full mt-2 w-48 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-50 p-2">
+                                <div className="text-[10px] text-gray-500 font-bold px-3 py-2 uppercase tracking-widest border-b border-gray-800 mb-2">Changer le rôle</div>
+                                {[
+                                  { role: 'Challenger', label: 'Challenger', icon: UserIcon },
+                                  { role: 'Jury', label: 'Jury', icon: Shield },
+                                  { role: 'Admin', label: 'Admin', icon: ShieldCheck },
+                                  // Superadmin option restricted for safety in this list
+                                ].map((item) => (
+                                  <button
+                                    key={item.role}
+                                    onClick={() => handleRoleChange(user._id, item.role)}
+                                    disabled={actionLoading === user._id || user.role === item.role}
+                                    className={`flex items-center gap-3 w-full px-3 py-2 text-xs rounded-lg transition-colors ${
+                                      user.role === item.role 
+                                      ? 'bg-purple-500/20 text-purple-400 cursor-default' 
+                                      : 'hover:bg-gray-800 text-gray-400 hover:text-white'
+                                    }`}
+                                  >
+                                    <item.icon className="w-3.5 h-3.5" />
+                                    {item.label}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
                          </div>
-                         <button className="p-2 hover:bg-red-500/10 rounded-lg text-gray-500 hover:text-red-400 transition-all">
+                         <button 
+                           disabled={isSelf}
+                           className={`p-2 rounded-lg transition-all ${isSelf ? 'opacity-30 cursor-not-allowed' : 'hover:bg-red-500/10 text-gray-500 hover:text-red-400'}`}
+                         >
                            <Trash2 className="w-5 h-5" />
                          </button>
                       </div>
                     </td>
                   </tr>
-                )) : (
+                  )
+                }) : (
                   <tr>
                     <td colSpan="4" className="px-6 py-20 text-center">
                       <div className="flex flex-col items-center gap-3">

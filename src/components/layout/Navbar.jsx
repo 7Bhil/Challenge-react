@@ -22,6 +22,7 @@ import {
   User,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getRoleAvatar } from "../../service/api";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -140,7 +141,7 @@ const Navbar = () => {
   const isA = role === "Admin";
   const isJ = role === "Jury";
   const hasAdmin = isSA || isA || isJ;
-  const isMgr = isSA || isA;
+  const isMgr = isSA; // Seul le Superadmin valide les challenges désormais
 
   return (
     <nav
@@ -218,10 +219,10 @@ const Navbar = () => {
                         Lvl {user.level || 1} • {user.points || 0}pts
                       </div>
                     </div>
-                    <img
-                      src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name || 'User'}`}
+                     <img
+                      src={getRoleAvatar(user)}
                       alt="avatar"
-                      className="w-8 h-8 rounded-full border border-gray-700"
+                      className="w-8 h-8 rounded-full border border-gray-700 shadow-sm"
                     />
                     <ChevronDown
                       className={`w-4 h-4 transition-transform ${
@@ -235,7 +236,7 @@ const Navbar = () => {
                       <div className="px-4 py-3 bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700">
                         <div className="flex items-center gap-3">
                           <img
-                            src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name || 'User'}`}
+                            src={user.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.name || 'User'}`}
                             alt={user.name}
                             className="w-12 h-12 rounded-full border-2 border-blue-500/40"
                           />
@@ -259,7 +260,7 @@ const Navbar = () => {
                         <Item
                           Icon={Brain}
                           label="Dashboard"
-                          onClick={() => navigate("/dashboard")}
+                          onClick={() => navigate("/")}
                         />
                         <Item
                           Icon={Settings}
@@ -278,8 +279,8 @@ const Navbar = () => {
                             {isMgr && (
                               <Item
                                 Icon={Shield}
-                                label="Manage Challenges"
-                                onClick={() => navigate("/admin/challenges")}
+                                label="Validation Challenges"
+                                onClick={() => navigate("/admin/validation")}
                                 variant="a"
                               />
                             )}
@@ -287,7 +288,7 @@ const Navbar = () => {
                               <Item
                                 Icon={Star}
                                 label="Review Submissions"
-                                onClick={() => navigate("/admin/reviews")}
+                                onClick={() => navigate("/jury/submissions")}
                                 variant="j"
                               />
                             )}

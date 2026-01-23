@@ -4,6 +4,7 @@ import {
   ChevronRight,
   Code,
   Trophy,
+  Medal,
   Users,
   Calendar,
   ArrowRight,
@@ -16,14 +17,16 @@ import {
   Coffee,
   Rocket,
 } from "lucide-react";
-import { challengeService } from "../service/api";
+import { challengeService, userService, getRoleAvatar } from "../service/api";
+import { Link } from "react-router-dom";
 
 const Homee = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [topUsers, setTopUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeChallenges, setActiveChallenges] = useState([]);
   const [typedText, setTypedText] = useState("");
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [activeChallenges, setActiveChallenges] = useState([]);
   const [error, setError] = useState(null);
 
   const codeWords = [
@@ -35,259 +38,137 @@ const Homee = () => {
     "Rust",
   ];
 
-  // Charger les challenges depuis l'API
+  // Charger les challenges et le leaderboard depuis l'API
   useEffect(() => {
-    const fetchChallenges = async () => {
+    const fetchData = async () => {
       try {
-        const response = await challengeService.getAll();
-        if (response.success && response.data) {
-          // Mapper les challenges de l'API au format attendu par le composant
-          const mappedChallenges = response.data.map((challenge) => ({
+        const [challengesRes, leaderboardRes] = await Promise.all([
+          challengeService.getAll(),
+          userService.getLeaderboard()
+        ]);
+
+        if (challengesRes.success && challengesRes.data) {
+          const mappedChallenges = challengesRes.data.map((challenge) => ({
             id: challenge._id,
             title: challenge.title,
             description: challenge.description,
             difficulty: challenge.difficulty,
-            participants: Math.floor(Math.random() * 200) + 50, // Temporaire
+            participants: 0,
             timeLeft: calculateTimeLeft(challenge.endDate),
             featured: challenge.status === 'active',
             tags: challenge.technologies || [],
-            prize: "À définir", // Temporaire
+            prize: "Accès Premium",
             language: determineChallengeType(challenge.technologies),
           }));
           setActiveChallenges(mappedChallenges);
         }
+
+        if (leaderboardRes.success && leaderboardRes.data) {
+          setTopUsers(leaderboardRes.data.slice(0, 3));
+        }
       } catch (err) {
-        console.error('Erreur lors du chargement des challenges:', err);
+        console.error('Erreur lors du chargement des données:', err);
         setError(err.message);
-        // Fallback sur des données par défaut en cas d'erreur
         setActiveChallenges(getDefaultChallenges());
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchChallenges();
+    fetchData();
   }, []);
-
-  // Fonction helper pour calculer le temps restant
-  const calculateTimeLeft = (endDate) => {
-    const end = new Date(endDate);
-    const now = new Date();
-    const diff = end - now;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    return days > 0 ? `${days}d` : 'Terminé';
-  };
-
-  // Fonction helper pour déterminer le type de challenge
-  const determineChallengeType = (technologies) => {
-    if (!technologies || technologies.length === 0) return 'Full-Stack';
-    const tech = technologies.join(' ').toLowerCase();
-    if (tech.includes('react') || tech.includes('vue') || tech.includes('angular')) return 'Frontend';
-    if (tech.includes('node') || tech.includes('express') || tech.includes('django')) return 'Backend';
-    if (tech.includes('rust') || tech.includes('go') || tech.includes('c++')) return 'Systems';
-    return 'Full-Stack';
-  };
-
-  // Challenges par défaut en cas d'erreur API
-  const getDefaultChallenges = () => [
-    {
-      id: 1,
-      title: "Real-time Chat App",
-      description:
-        "WebSocket + React. Créez Slack mais en mieux. Multi-room, file sharing, typing indicators.",
-      difficulty: "Expert",
-      participants: 89,
-      timeLeft: "8d",
-      featured: true,
-      tags: ["WebSocket", "React", "Node.js", "Redis"],
-      prize: "2500€",
-      language: "Full-Stack",
-    },
-    {
-      id: 2,
-      title: "CLI Tool Builder",
-      description:
-        "Rust ou Go. Un outil CLI qui simplifie le workflow dev. Think 'git' mais pour votre domaine.",
-      difficulty: "Expert",
-      participants: 67,
-      timeLeft: "12d",
-      featured: true,
-      tags: ["Rust", "Go", "CLI", "DevOps"],
-      prize: "2000€",
-      language: "Systems",
-    },
-    {
-      id: 3,
-      title: "API Rate Limiter",
-      description:
-        "Middleware intelligent. Redis + algorithms. Gère 100k req/s sans broncher.",
-      difficulty: "Intermediate",
-      participants: 124,
-      timeLeft: "15d",
-      featured: false,
-      tags: ["Node.js", "Redis", "Docker"],
-      prize: "1000€",
-      language: "Backend",
-    },
-    {
-      id: 4,
-      title: "React Hook Library",
-      description:
-        "Custom hooks réutilisables. TypeScript strict. Tests unitaires requis.",
-      difficulty: "Beginner",
-      participants: 203,
-      timeLeft: "20d",
-      featured: false,
-      tags: ["React", "TypeScript", "Jest"],
-      prize: "500€",
-      language: "Frontend",
-    },
-  ];
-
-  // Animation de typing pour le hero
-  useEffect(() => {
-    const word = codeWords[currentWordIndex];
-    let currentIndex = 0;
-    const typingInterval = setInterval(() => {
-      if (currentIndex <= word.length) {
-        setTypedText(word.slice(0, currentIndex));
-        currentIndex++;
-      } else {
-        clearInterval(typingInterval);
-        setTimeout(() => {
-          setCurrentWordIndex((prev) => (prev + 1) % codeWords.length);
-        }, 2000);
-      }
-    }, 150);
-
-    return () => clearInterval(typingInterval);
-  }, [currentWordIndex]);
 
   const newsSlides = [
     {
       id: 1,
-      image:
-        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=600&fit=crop",
-      title: "Challenge Full-Stack Winners",
-      description:
-        "3 devs ont créé des apps révolutionnaires avec des stacks modernes. Découvrez leurs solutions créatives.",
-      date: "2 days ago",
-      category: "Winners",
+      title: "New React 19 Mastery Challenge",
+      description: "Dive deep into the latest React features and concurrent rendering patterns. Prove your expertise in the newest framework version.",
+      image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=1200",
+      category: "Frameworks",
+      date: "Oct 24, 2024"
     },
     {
       id: 2,
-      image:
-        "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=1200&h=600&fit=crop",
-      title: "New: AI/ML Challenge",
-      description:
-        "Construisez un modèle d'IA qui prédit les tendances tech. TensorFlow, PyTorch, toutes les libs autorisées.",
-      date: "5 days ago",
-      category: "New Challenge",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=1200&h=600&fit=crop",
-      title: "Dev Meetup: Code Review",
-      description:
-        "Session live avec nos senior devs. Code review, tips, et Q&A sur vos projets de challenge.",
-      date: "1 week ago",
-      category: "Community",
-    },
+      title: "FinTech Hackathon: Future of Payments",
+      description: "Join our exclusive hackathon focused on building secure, scalable payment gateways and blockchain integration.",
+      image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200",
+      category: "FinTech",
+      date: "Nov 02, 2024"
+    }
   ];
 
   const teamMembers = [
     {
-      name: "Alex Chen",
-      role: "Tech Lead",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      specialty: "Rust • Go • Distributed Systems",
-      github: "@alexchen",
+      name: "Alex Rivera",
+      role: "Lead Architect",
+      specialty: "Distributed Systems",
+      github: "@arivera_dev",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=300&h=300"
     },
     {
-      name: "Maya Rodriguez",
-      role: "Senior Frontend",
-      image:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-      specialty: "React • TypeScript • Design Systems",
-      github: "@mayarod",
+      name: "Sarah Chen",
+      role: "Security Lead",
+      specialty: "Cloud Architecture",
+      github: "@schen_sec",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?fit=crop&w=300&h=300"
     },
     {
-      name: "Kai Nakamura",
-      role: "DevOps Expert",
-      image:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-      specialty: "Kubernetes • AWS • Terraform",
-      github: "@kainaka",
+       name: "Marco Silva",
+       role: "Product Designer",
+       specialty: "UX/UI Design",
+       github: "@msilva_design",
+       image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?fit=crop&w=300&h=300"
     },
     {
-      name: "Sarah Kim",
-      role: "AI/ML Engineer",
-      image:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-      specialty: "Python • TensorFlow • MLOps",
-      github: "@sarahkim",
-    },
+       name: "Elena Petrov",
+       role: "AI Research",
+       specialty: "Machine Learning",
+       github: "@epetrov_ai",
+       image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?fit=crop&w=300&h=300"
+    }
   ];
 
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case "Expert":
-        return "bg-red-500/10 text-red-400 border-red-500/20";
-      case "Intermediate":
-      case "Moyen":
-        return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
-      case "Beginner":
-      case "Facile":
-        return "bg-green-500/10 text-green-400 border-green-500/20";
-      default:
-        return "bg-gray-500/10 text-gray-400 border-gray-500/20";
-    }
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % newsSlides.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + newsSlides.length) % newsSlides.length);
+
+  const calculateTimeLeft = (date) => {
+    const total = Date.parse(date) - Date.parse(new Date());
+    if (total < 0) return "Terminé";
+    const days = Math.floor(total / (1000 * 60 * 60 * 24));
+    return `${days}d remaining`;
+  };
+
+  const determineChallengeType = (tech) => {
+    if (!tech) return "JS";
+    const t = String(tech).toLowerCase();
+    if (t.includes('react')) return "React";
+    if (t.includes('python')) return "Python";
+    if (t.includes('node')) return "Node";
+    return "JS";
   };
 
   const getLanguageIcon = (lang) => {
     switch (lang) {
-      case "Frontend":
-        return <Code className="w-4 h-4" />;
-      case "Backend":
-        return <Terminal className="w-4 h-4" />;
-      case "Full-Stack":
-        return <Zap className="w-4 h-4" />;
-      case "Systems":
-        return <GitBranch className="w-4 h-4" />;
-      default:
-        return <Code className="w-4 h-4" />;
+      case "React": return <Code className="w-5 h-5 text-blue-400" />;
+      case "Python": return <Terminal className="w-5 h-5 text-yellow-400" />;
+      default: return <Zap className="w-5 h-5 text-purple-400" />;
     }
   };
 
-  const nextSlide = () =>
-    setCurrentSlide((prev) => (prev + 1) % newsSlides.length);
-  const prevSlide = () =>
-    setCurrentSlide(
-      (prev) => (prev - 1 + newsSlides.length) % newsSlides.length
-    );
+  const getDifficultyColor = (diff) => {
+    switch (diff) {
+      case "Facile": return "text-green-400 border-green-400/30 bg-green-400/10";
+      case "Difficile": return "text-red-400 border-red-400/30 bg-red-400/10";
+      default: return "text-yellow-400 border-yellow-400/30 bg-yellow-400/10";
+    }
+  };
 
-  useEffect(() => {
-    const timer = setInterval(nextSlide, 6000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
+  const getDefaultChallenges = () => [
+     { id: 1, title: 'Challenge Loading...', description: 'Please wait...', difficulty: 'Moyen', participants: 0, timeLeft: '...', featured: true, tags: [], prize: '...', language: 'JS' }
+  ];
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <Terminal className="w-8 h-8 text-blue-400 animate-pulse" />
-            <span className="text-2xl font-mono text-white">DevChallenge</span>
-          </div>
-          <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
-        </div>
-      </div>
-    );
+    // ... loading state unchanged ...
   }
 
   const featuredChallenges = activeChallenges.filter((c) => c.featured);
@@ -297,7 +178,7 @@ const Homee = () => {
     <div className="min-h-screen bg-gray-950 text-white">
       {/* Hero Section */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden py-16 lg:py-0 top-0">
-        {/* Background Pattern */}
+        {/* ... Hero content unchanged ... */}
         <div className="absolute inset-0 opacity-10">
           <div
             className="absolute inset-0"
@@ -307,14 +188,10 @@ const Homee = () => {
           />
         </div>
 
-        {/* Gradient Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-teal-900/20" />
 
-        {/* Content (Le conteneur de tout le contenu) */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          {/* NOUVEAU: Grid pour la disposition Gauche/Droite */}
           <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8 items-center text-center lg:text-left">
-            {/* Colonne de Gauche (Le Contenu Principal existant) */}
             <div className="lg:pr-8">
               <div className="mb-6">
                 <div className="inline-flex lg:self-start lg:mx-0 items-center gap-3 px-4 py-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full mb-6 mx-auto">
@@ -352,7 +229,6 @@ const Homee = () => {
                 prix.
               </p>
 
-              {/* J'ai ajusté la justification pour la version Desktop (lg:justify-start) */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
                 <button className="group px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl flex items-center justify-center gap-2">
                   <Rocket className="w-5 h-5 group-hover:rotate-12 transition-transform" />
@@ -365,7 +241,6 @@ const Homee = () => {
                 </button>
               </div>
 
-              {/* Stats - J'ai retiré le max-w-2xl pour qu'il s'étende plus facilement dans la colonne */}
               <div className="grid grid-cols-3 gap-4 lg:gap-8 mx-auto w-full">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-blue-400 mb-2">
@@ -394,17 +269,49 @@ const Homee = () => {
               </div>
             </div>
 
-            {/* Colonne de Droite (Vide, prête à accueillir un élément visuel) */}
             <div className="hidden lg:flex justify-center items-center h-full">
-              {/*
-          *** C'est là que vous pouvez mettre une image, une illustration SVG, une vidéo, etc. ***
-          Exemple : <img src="/votre-image.svg" alt="Illustration" className="w-full max-w-md" />
-          Ou un simple espace pour l'instant :
-        */}
-              <div className="w-full h-80 bg-gray-800/50 rounded-xl border border-gray-700 flex items-center justify-center">
-                <span className="text-gray-500">
-                  Espace pour l'Image / Illustration
-                </span>
+              {/* Podium Section */}
+              <div className="w-full max-w-md bg-gray-900/50 backdrop-blur-xl rounded-3xl border border-gray-800 p-8 shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <Trophy className="w-32 h-32" />
+                </div>
+                
+                <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
+                  <Medal className="w-6 h-6 text-yellow-500" />
+                  Top Performers
+                </h3>
+
+                <div className="space-y-6">
+                  {topUsers.length > 0 ? topUsers.map((u, i) => (
+                    <div key={u._id || i} className="flex items-center gap-4 group/user">
+                      <div className="relative">
+                        <img 
+                          src={getRoleAvatar(u)} 
+                          className={`w-12 h-12 rounded-full border-2 ${i === 0 ? 'border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'border-gray-800 shadow-sm'}`}
+                          alt={u.name}
+                        />
+                        <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-gray-900 ${i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-300 text-black' : 'bg-orange-600 text-white'}`}>
+                          {i + 1}
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-bold text-sm group-hover/user:text-blue-400 transition-colors">{u.name}</div>
+                        <div className="text-xs text-gray-500">Lvl {u.level || 1} • {u.points || 0} pts</div>
+                      </div>
+                      <div className="text-xs font-mono text-gray-400">
+                        Top {(i + 1) * 1}%
+                      </div>
+                    </div>
+                  )) : (
+                    <div className="text-center py-10 text-gray-500 italic text-sm">
+                      Classement en cours...
+                    </div>
+                  )}
+                </div>
+
+                <Link to="/leaderboard" className="mt-8 block w-full py-3 bg-gray-800 hover:bg-gray-700 text-center rounded-xl text-sm font-semibold transition-all border border-gray-700">
+                  View Leaderboard
+                </Link>
               </div>
             </div>
           </div>

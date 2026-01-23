@@ -1,10 +1,10 @@
-import { Route, Router, Routes } from "react-router-dom";
-import Home from "../pages/public/Home";
+import { Route, Routes } from "react-router-dom";
 import Profil from "../components/Profil";
 import Leaderboard from "../components/leaderboard";
+import JurySubmissions from "../components/Notes";
 import Login from "../pages/signin/Login";
 import Register from "../pages/signin/Register";
-import ChallengesList from "../components//ChallengesList";
+import ChallengesList from "../components/ChallengesList";
 import ChallengeDetail from "../components/ChallengeDetail";
 import Homee from "../pages/Homee";
 import CreateChallenge from "../pages/Admin/CreationChallenges";
@@ -18,7 +18,7 @@ export default function AppRoutes() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Homee />} />
         <Route path="/home" element={<Homee />} />
         <Route path="/challenges" element={<ChallengesList />} />
         <Route path="/challenge/:id" element={<ChallengeDetail />} />
@@ -35,6 +35,7 @@ export default function AppRoutes() {
         {/* SuperAdmin Routes */}
         <Route path="/admin/users" element={<UserManagement />} />
         <Route path="/admin/validation" element={<ChallengeValidation />} />
+        <Route path="/jury/submissions" element={<JurySubmissions />} />
       </Routes>
 
     </>

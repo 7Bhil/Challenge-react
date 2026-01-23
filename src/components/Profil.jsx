@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { userService, authService } from '../service/api';
+import { userService, authService, getRoleAvatar } from '../service/api';
 import { 
   User, 
   Mail, 
@@ -114,7 +114,7 @@ const UserProfile = () => {
               <div className="relative mb-6 group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
                 <img 
-                  src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} 
+                  src={getRoleAvatar(user)} 
                   alt={user.name} 
                   className="relative w-32 h-32 rounded-full mx-auto border-4 border-gray-900 shadow-2xl "
                 />
@@ -173,9 +173,9 @@ const UserProfile = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {[
-                { label: 'Défis Relevés', value: '12', icon: Code, color: 'blue' },
-                { label: 'Solutions Approuvées', value: '8', icon: Rocket, color: 'purple' },
-                { label: 'Rang Global', value: '#15', icon: Trophy, color: 'orange' },
+                { label: 'Points Totaux', value: `${user.points || 0}`, icon: Star, color: 'blue' },
+                { label: 'Streak Actuel', value: `${user.streak || 0}`, icon: Flame, color: 'purple' },
+                { label: 'Niveau', value: `Lv. ${user.level || 1}`, icon: Trophy, color: 'orange' },
               ].map((stat, i) => (
                 <div key={i} className="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl relative overflow-hidden group">
                    <div className={`absolute -right-4 -bottom-4 w-20 h-20 bg-${stat.color}-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`}></div>
