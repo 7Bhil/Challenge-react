@@ -210,18 +210,44 @@ const UserProfile = () => {
               </div>
             </div>
             
-            {/* Badges/Achievements Placeholder */}
-            <div className="bg-gray-900/50 border border-gray-800 rounded-3xl p-6">
+            {/* Badges/Achievements */}
+            <div className="bg-gray-900/50 border border-gray-800 rounded-3xl p-6 transition-all hover:border-gray-700">
                <h2 className="text-lg font-bold flex items-center gap-2 mb-6">
                   <Zap className="w-5 h-5 text-yellow-400" />
                   Badges & Succès
                 </h2>
-                <div className="flex flex-wrap gap-4 opacity-50 grayscale">
-                  {[1, 2, 3, 4, 5].map(b => (
-                    <div key={b} className="w-12 h-12 bg-gray-950 rounded-2xl border border-gray-800 flex items-center justify-center">
-                      <Brain className="w-6 h-6 text-gray-700" />
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {user.badges && user.badges.length > 0 ? (
+                    user.badges.map((item, index) => {
+                      const IconComponent = Brain; // Par défaut, on peut mapper dynamiquement plus tard
+                      return (
+                        <div key={index} className="relative p-4 bg-gray-950 rounded-2xl border border-gray-800 flex flex-col items-center gap-2 group/badge hover:bg-gray-900 transition-all">
+                          {item.count > 1 && (
+                            <div className="absolute -top-2 -right-2 bg-purple-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg ring-2 ring-gray-900 z-10">
+                              x{item.count}
+                            </div>
+                          )}
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-gray-900 border border-gray-800 group-hover/badge:scale-110 transition-transform ${item.badge.rarity === 'Gold' ? 'text-yellow-400' : 'text-blue-400'}`}>
+                             <IconComponent className="w-6 h-6" />
+                          </div>
+                          <div className="text-center">
+                             <div className="text-xs font-bold text-gray-200">{item.badge.name}</div>
+                             <div className="text-[10px] text-gray-500 uppercase font-medium">{item.badge.rarity}</div>
+                          </div>
+                          
+                          {/* Tooltip on Hover */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-black text-white text-[10px] rounded-lg opacity-0 group-hover/badge:opacity-100 transition-opacity pointer-events-none z-20 text-center shadow-2xl border border-gray-800">
+                            {item.badge.description}
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="col-span-full py-8 text-center bg-gray-950/30 rounded-2xl border border-dashed border-gray-800 text-gray-600 text-sm">
+                      Aucun badge débloqué pour le moment.
                     </div>
-                  ))}
+                  )}
                 </div>
             </div>
           </div>
