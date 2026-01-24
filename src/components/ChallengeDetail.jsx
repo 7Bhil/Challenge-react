@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Trophy } from 'lucide-react';
 import api, { submissionService } from '../service/api';
+import ChallengeLeaderboard from './ChallengeLeaderboard';
 
 const ChallengeDetail = () => {
   const { id } = useParams();
@@ -144,9 +146,16 @@ const ChallengeDetail = () => {
             <div className="bg-gray-800 border border-gray-700 rounded-xl shadow-lg p-6 mb-6">
               <div className="flex justify-between items-start mb-4">
                 <h1 className="text-3xl font-bold text-purple-300">{challenge.title}</h1>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(challenge.status)}`}>
-                  {challenge.status}
-                </span>
+                <div className="flex gap-2">
+                  {new Date(challenge.endDate) < new Date() && (
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-500 border border-red-500/30 uppercase tracking-widest">
+                      Terminé
+                    </span>
+                  )}
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(challenge.status)}`}>
+                    {challenge.status}
+                  </span>
+                </div>
               </div>
               
               <p className="text-gray-300 mb-6 leading-relaxed">{challenge.description}</p>
@@ -219,6 +228,9 @@ const ChallengeDetail = () => {
                 </ul>
               </div>
             </div>
+
+            {/* Leaderboard Section */}
+            <ChallengeLeaderboard challengeId={id} />
           </div>
           
           {/* Formulaire de soumission */}
@@ -226,7 +238,15 @@ const ChallengeDetail = () => {
             <div className="bg-gray-800 border border-gray-700 rounded-xl shadow-xl p-6 sticky top-6">
               <h2 className="text-xl font-bold text-white mb-6">Soumettre votre solution</h2>
               
-              {submissionSuccess ? (
+              {new Date(challenge.endDate) < new Date() ? (
+                <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-6 text-center">
+                  <Trophy className="w-12 h-12 text-yellow-500/50 mx-auto mb-4" />
+                  <p className="text-gray-300 font-bold mb-2">Les soumissions sont closes</p>
+                  <p className="text-sm text-gray-500">
+                    Ce défi s'est terminé le {new Date(challenge.endDate).toLocaleDateString()}. Vous pouvez consulter le classement ci-dessous.
+                  </p>
+                </div>
+              ) : submissionSuccess ? (
                 <div className="bg-green-900/20 border border-green-800 rounded-lg p-4 mb-6">
                   <div className="flex items-center">
                     <svg className="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

@@ -30,6 +30,7 @@ export default function AppRoutes() {
         {/* Admin Routes */}
         <Route path="/creation-challenge" element={<CreateChallenge />} />
         <Route path="/admin/challenges" element={<AdminChallenges />} />
+        <Route path="/admin/all-challenges" element={<SuperAdminChallenges />} />
         <Route path="/edit-challenge/:id" element={<EditChallenge />} />
         
         {/* SuperAdmin Routes */}

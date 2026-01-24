@@ -9,71 +9,32 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
+import { challengeService, adminService } from "../../service/api";
+
 const SuperAdminChallenges = () => {
   const [challenges, setChallenges] = useState([]);
   const [filteredChallenges, setFilteredChallenges] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Simulation de données - à remplacer par un appel API réel
   useEffect(() => {
-    // Dans une application réelle, ces données viendraient d'une API
-    const mockChallenges = [
-      {
-        id: 1,
-        title: "Application de Gestion de Tâches",
-        description:
-          "Créez une application React pour gérer vos tâches quotidiennes",
-        startDate: "2023-10-01",
-        endDate: "2023-10-15",
-        difficulty: "medium",
-        technologies: "React, JavaScript, CSS",
-        status: "active",
-        createdBy: "admin1",
-        creatorName: "Jean Dupont",
-      },
-      {
-        id: 2,
-        title: "API REST avec Node.js",
-        description: "Développez une API REST complète avec Node.js et Express",
-        startDate: "2023-10-05",
-        endDate: "2023-10-20",
-        difficulty: "hard",
-        technologies: "Node.js, Express, MongoDB",
-        status: "upcoming",
-        createdBy: "admin2",
-        creatorName: "Marie Martin",
-      },
-      {
-        id: 3,
-        title: "Site Portfolio",
-        description: "Concevez un site portfolio responsive avec HTML/CSS",
-        startDate: "2023-09-20",
-        endDate: "2023-10-05",
-        difficulty: "easy",
-        technologies: "HTML, CSS, JavaScript",
-        status: "completed",
-        createdBy: "admin1",
-        creatorName: "Jean Dupont",
-      },
-      {
-        id: 4,
-        title: "Application de Chat en Temps Réel",
-        description: "Développez une application de chat avec Socket.io",
-        startDate: "2023-10-10",
-        endDate: "2023-10-30",
-        difficulty: "hard",
-        technologies: "Node.js, Socket.io, React",
-        status: "upcoming",
-        createdBy: "admin3",
-        creatorName: "Pierre Lambert",
-      },
-    ];
-
-    setChallenges(mockChallenges);
-    setFilteredChallenges(mockChallenges);
-    setLoading(false);
+    fetchChallenges();
   }, []);
+
+  const fetchChallenges = async () => {
+    try {
+      setLoading(true);
+      const response = await challengeService.getAll();
+      if (response.success) {
+        setChallenges(response.data);
+        setFilteredChallenges(response.data);
+      }
+    } catch (err) {
+      console.error("Erreur chargement challenges:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearch = (e) => {
     const term = e.target.value;
@@ -86,21 +47,25 @@ const SuperAdminChallenges = () => {
         (challenge) =>
           challenge.title.toLowerCase().includes(term.toLowerCase()) ||
           challenge.description.toLowerCase().includes(term.toLowerCase()) ||
-          challenge.technologies.toLowerCase().includes(term.toLowerCase()) ||
-          challenge.creatorName.toLowerCase().includes(term.toLowerCase())
+          (challenge.technologies && challenge.technologies.join(", ").toLowerCase().includes(term.toLowerCase())) ||
+          (challenge.createdBy?.name && challenge.createdBy.name.toLowerCase().includes(term.toLowerCase()))
       );
       setFilteredChallenges(filtered);
     }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce challenge ?")) {
-      // Simulation de suppression - à remplacer par un appel API réel
-      const updatedChallenges = challenges.filter(
-        (challenge) => challenge.id !== id
-      );
-      setChallenges(updatedChallenges);
-      setFilteredChallenges(updatedChallenges);
+  const handleDelete = async (id) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce challenge ? Cela supprimera également toutes les soumissions associées.")) {
+      try {
+        const response = await adminService.deleteChallenge(id);
+        if (response.success) {
+          alert("Challenge supprimé avec succès");
+          fetchChallenges();
+        }
+      } catch (err) {
+        console.error("Erreur suppression:", err);
+        alert(err.response?.data?.message || "Erreur lors de la suppression");
+      }
     }
   };
 
@@ -176,39 +141,39 @@ const SuperAdminChallenges = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-950 text-gray-100 py-8 px-4 sm:px-6 lg:px-8 mt-14">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="bg-gray-900 border border-gray-800 shadow-2xl rounded-2xl overflow-hidden">
           {/* En-tête */}
-          <div className="bg-gradient-to-r from-purple-600 to-red-700 p-6 text-white">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+          <div className="bg-gradient-to-r from-purple-900/40 via-purple-600/40 to-blue-600/40 p-8 border-b border-gray-800 backdrop-blur-xl">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div>
-                <h1 className="text-2xl font-bold flex items-center">
-                  <FaCrown className="mr-2" /> Tous les Challenges (Super Admin)
+                <h1 className="text-3xl font-extrabold flex items-center bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                  <FaCrown className="mr-3 text-yellow-500" /> Gestion des Challenges
                 </h1>
-                <p className="mt-2">
-                  Gérez tous les challenges de la plateforme
+                <p className="mt-2 text-gray-400 font-medium">
+                  Console d'administration Super Admin • Contrôle total
                 </p>
               </div>
               <Link
-                to="/create-challenge"
-                className="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md transition-colors"
+                to="/creation-challenge"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-green-900/20 transition-all transform hover:scale-105"
               >
-                <FaPlus className="mr-2" /> Nouveau Challenge
+                <FaPlus className="mr-2" /> Créer un Challenge
               </Link>
             </div>
           </div>
 
-          {/* Barre de recherche et filtres */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaSearch className="text-gray-400" />
+          {/* Barre de recherche */}
+          <div className="p-6 bg-gray-900/50 border-b border-gray-800">
+            <div className="relative max-w-md">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <FaSearch className="text-gray-500" />
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                placeholder="Rechercher un challenge..."
+                className="block w-full pl-11 pr-4 py-3 bg-gray-950 border border-gray-800 rounded-xl leading-5 text-gray-200 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all"
+                placeholder="Rechercher par titre, techno ou créateur..."
                 value={searchTerm}
                 onChange={handleSearch}
               />
@@ -217,114 +182,92 @@ const SuperAdminChallenges = () => {
 
           {/* Liste des challenges */}
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-800">
+              <thead className="bg-gray-950/50">
                 <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Titre
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    Challenge
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Créateur
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    Auteur
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Difficulté
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    Infos
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Technologies
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
                     Statut
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Dates
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    Période
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
+                  <th scope="col" className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-widest">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-800 bg-gray-900/30">
                 {filteredChallenges.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan="7"
-                      className="px-6 py-4 text-center text-sm text-gray-500"
-                    >
-                      Aucun challenge trouvé
+                    <td colSpan={6} className="px-6 py-20 text-center">
+                      <div className="flex flex-col items-center">
+                        <FaSearch className="text-gray-700 text-4xl mb-4" />
+                        <p className="text-gray-500 text-lg italic">Aucun challenge ne correspond à votre recherche</p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
                   filteredChallenges.map((challenge) => (
-                    <tr key={challenge.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
+                    <tr key={challenge._id} className="hover:bg-gray-800/40 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-bold text-white group-hover:text-purple-400 transition-colors">
                           {challenge.title}
                         </div>
-                        <div className="text-sm text-gray-500 truncate max-w-xs">
+                        <div className="text-xs text-gray-500 truncate max-w-xs mt-1">
                           {challenge.description}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <FaUser className="text-gray-400 mr-2" />
-                          <span className="text-sm text-gray-500">
-                            {challenge.creatorName}
+                          <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center mr-3 border border-gray-700">
+                             <FaUser className="text-gray-500 text-xs" />
+                          </div>
+                          <span className="text-sm font-medium text-gray-300 italic">
+                            {challenge.createdBy?.name || "Inconnu"}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {getDifficultyBadge(challenge.difficulty)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {challenge.technologies}
+                        <div className="mb-1">{getDifficultyBadge(challenge.difficulty)}</div>
+                        <div className="text-[10px] font-bold text-gray-600 uppercase tracking-tighter">
+                          {challenge.technologies?.join(", ") || "N/A"}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(challenge.status)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <div>
-                          Début:{" "}
-                          {new Date(challenge.startDate).toLocaleDateString()}
-                        </div>
-                        <div>
-                          Fin:{" "}
-                          {new Date(challenge.endDate).toLocaleDateString()}
+                      <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-400">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-green-500/70">Du {new Date(challenge.startDate).toLocaleDateString()}</span>
+                          <span className="text-red-500/70">Au {new Date(challenge.endDate).toLocaleDateString()}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <Link
-                          to={`/edit-challenge/${challenge.id}`}
-                          className="text-indigo-600 hover:text-indigo-900 mr-4"
-                        >
-                          <FaEdit className="inline mr-1" /> Modifier
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(challenge.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          <FaTrash className="inline mr-1" /> Supprimer
-                        </button>
+                        <div className="flex justify-end gap-3">
+                          <Link
+                            to={`/edit-challenge/${challenge._id}`}
+                            className="p-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600 hover:text-white rounded-lg transition-all"
+                            title="Modifier"
+                          >
+                            <FaEdit size={16} />
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(challenge._id)}
+                            className="p-2 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white rounded-lg transition-all"
+                            title="Supprimer"
+                          >
+                            <FaTrash size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))

@@ -50,8 +50,9 @@ api.interceptors.response.use(
 // ============================================
 
 export const challengeService = {
-  getAll: async () => {
-    const response = await api.get('/challenges');
+  getAll: async (filters = {}) => {
+    const params = new URLSearchParams(filters);
+    const response = await api.get(`/challenges?${params}`);
     return response.data;
   },
 
@@ -72,6 +73,11 @@ export const challengeService = {
 
   delete: async (id) => {
     const response = await api.delete(`/challenges/${id}`);
+    return response.data;
+  },
+
+  getLeaderboard: async (id) => {
+    const response = await api.get(`/challenges/${id}/leaderboard`);
     return response.data;
   }
 };
@@ -231,6 +237,12 @@ export const adminService = {
   // Statistiques
   getStats: async () => {
     const response = await api.get('/admin/stats');
+    return response.data;
+  },
+
+  // Supprimer un challenge
+  deleteChallenge: async (id) => {
+    const response = await api.delete(`/admin/challenges/${id}`);
     return response.data;
   }
 };

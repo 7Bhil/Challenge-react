@@ -82,7 +82,7 @@ const Navbar = () => {
       return [
         ...baseLinks,
         { path: "/admin/users", label: "Gestion Users", Icon: Users },
-        { path: "/admin/validation", label: "Validation", Icon: Shield },
+        { path: "/admin/all-challenges", label: "Gestion Challenges", Icon: Shield },
         { path: "/leaderboard", label: "Leaderboard", Icon: Trophy },
       ];
     }
@@ -301,6 +301,12 @@ const Navbar = () => {
                                   variant="a"
                                 />
                                 <Item
+                                  Icon={Shield}
+                                  label="Gestion Challenges"
+                                  onClick={() => navigate("/admin/all-challenges")}
+                                  variant="a"
+                                />
+                                <Item
                                   Icon={Zap}
                                   label="System Config"
                                   onClick={() => navigate("/admin/system")}
@@ -357,40 +363,157 @@ const Navbar = () => {
         </div>
 </div>
       {/* Mobile Drawer */}
-      {menuOpen && (
-        <div className="md:hidden bg-gray-900 border-t border-gray-800 shadow-lg">
-          <div className="px-4 py-4 space-y-2">
+      <div 
+        className={`md:hidden fixed inset-x-0 top-16 bg-gray-900 border-t border-gray-800 shadow-2xl transition-all duration-300 ease-in-out transform overflow-hidden ${
+          menuOpen ? "max-h-[calc(100vh-4rem)] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-4"
+        }`}
+      >
+        <div className="px-5 py-6 space-y-6 overflow-y-auto max-h-[calc(100vh-6rem)]">
+          {/* Mobile User Profile */}
+          {loggedIn ? (
+            <div className="flex items-center gap-4 p-4 bg-gray-800/50 rounded-2xl border border-gray-700">
+              <img
+                src={getRoleAvatar(user)}
+                alt={user.name}
+                className="w-14 h-14 rounded-full border-2 border-blue-500/40 shadow-lg"
+              />
+              <div className="flex-1 min-w-0">
+                <div className="font-bold text-white text-lg truncate">
+                  {user.name}
+                </div>
+                <div className="text-sm text-blue-400 font-medium">
+                  Niveau {user.level || 1} • {user.points || 0} pts
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 text-white font-semibold rounded-xl border border-gray-700 hover:bg-gray-700 transition"
+              >
+                <LogIn className="w-4 h-4" />
+                Login
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-xl shadow-lg transition"
+              >
+                <UserPlus className="w-4 h-4" />
+                Sign Up
+              </Link>
+            </div>
+          )}
+
+          {/* Navigation Links */}
+          <div className="space-y-1">
+            <div className="px-3 mb-2">
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Navigation</span>
+            </div>
             {links.map(({ path, label, Icon }) => (
               <Link
                 key={path}
                 to={path}
                 onClick={() => setMenuOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
+                className={`flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
                   active(path)
-                    ? "bg-blue-500/20 text-blue-400"
-                    : "text-gray-300 hover:bg-gray-800"
+                    ? "bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]"
+                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-5 h-5" />
                 {label}
               </Link>
             ))}
+          </div>
 
-            {loggedIn && (
-              <>
-                <div className="border-t border-gray-700 my-3" />
+          {/* Admin Panel (Mobile) */}
+          {loggedIn && hasAdmin && (
+            <div className="space-y-1">
+              <div className="px-3 mb-2">
+                <span className="text-xs font-bold text-purple-400 uppercase tracking-widest">Admin Panel</span>
+              </div>
+              {isSA && (
+                <>
+                  <Link
+                    to="/admin/users"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-purple-300 hover:bg-purple-500/10 transition"
+                  >
+                    <Users className="w-5 h-5" />
+                    Manage Users
+                  </Link>
+                  <Link
+                    to="/admin/all-challenges"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-purple-300 hover:bg-purple-500/10 transition"
+                  >
+                    <Shield className="w-5 h-5" />
+                    Gestion Challenges
+                  </Link>
+                </>
+              )}
+              {isMgr && (
+                <Link
+                  to="/admin/validation"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-purple-300 hover:bg-purple-500/10 transition"
+                >
+                  <Shield className="w-5 h-5" />
+                  Validation Challenges
+                </Link>
+              )}
+              {isJ && (
+                <Link
+                  to="/jury/submissions"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-yellow-300 hover:bg-yellow-500/10 transition"
+                >
+                  <Star className="w-5 h-5" />
+                  Review Submissions
+                </Link>
+              )}
+            </div>
+          )}
+
+          {/* Additional User Links (Mobile) */}
+          {loggedIn && (
+            <div className="space-y-1 pt-2">
+               <div className="px-3 mb-2">
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Compte</span>
+              </div>
+              <Link
+                to={`/profile/${user.id}`}
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition"
+              >
+                <User className="w-5 h-5" />
+                Mon Profil
+              </Link>
+              <Link
+                to="/settings"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition"
+              >
+                <Settings className="w-5 h-5" />
+                Paramètres
+              </Link>
+              
+              <div className="pt-4 border-t border-gray-800">
                 <button
                   onClick={logout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10"
+                  className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-bold text-red-400 hover:bg-red-500/10 transition"
                 >
-                  <LogOut className="w-4 h-4" />
-                  Logout
+                  <LogOut className="w-5 h-5" />
+                  Se déconnecter
                 </button>
-              </>
-            )}
-          </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </nav>
   );
 };
