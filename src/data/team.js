@@ -22,7 +22,7 @@ export const teamData = {
       id: 1,
       name: "Emmanuel AGBOTOEDO",
       username: "@emmaben",
-      role: "Frontend Specialist && Dev Mobile",
+      role: "Dev Fullstack et gestions de projet",
       skill: "React, Django, Flutter",
       image: pote01
     },

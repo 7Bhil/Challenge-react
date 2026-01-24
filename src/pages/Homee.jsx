@@ -31,6 +31,7 @@ const Homee = () => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [error, setError] = useState(null);
   const [isAuth, setIsAuth] = useState(!!localStorage.getItem("token"));
+  const [isAutoScrollPaused, setIsAutoScrollPaused] = useState(false);
 
   const codeWords = [
     "React",
@@ -106,10 +107,21 @@ const Homee = () => {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % newsSlides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + newsSlides.length) % newsSlides.length);
 
+  // Auto-scroll effect
+  useEffect(() => {
+    if (isAutoScrollPaused) return;
+
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [isAutoScrollPaused, newsSlides.length]);
+
   const calculateTimeLeft = (date) => {
     const total = Date.parse(date) - Date.parse(new Date());
     if (total < 0) return "Terminé";
-    const days = Math.floor(total / (1000 * 60 * 60 * 24));
+    const days = Math.floor(total / (1000 *60 * 60 * 24));
     return `${days}j restants`;
   };
 
@@ -150,7 +162,7 @@ const Homee = () => {
   const regularChallenges = activeChallenges.filter((c) => !c.featured);
  
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-teal-900/20">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-16 lg:py-0">
   {/* ... Hero content unchanged ... */}
@@ -163,7 +175,7 @@ const Homee = () => {
     />
   </div>
 
-  <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-teal-900/20" />
+  <div className="absolute inset-0" />
 
   <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex items-center">
     {/* Modifié ici : Supprimé h-full de la grid, ajouté flex items-center sur le conteneur parent */}
@@ -241,7 +253,7 @@ const Homee = () => {
 
       <div className="hidden lg:flex justify-center items-center">
         {/* Podium Section */}
-        <div className="w-full max-w-md bg-gray-900/50 backdrop-blur-xl rounded-3xl border border-gray-800 p-8 shadow-2xl relative overflow-hidden group">
+        <div className="w-full max-w-md p-8 shadow-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
             <Trophy className="w-32 h-32" />
           </div>
@@ -293,7 +305,7 @@ const Homee = () => {
 </section>
 
       {/* News Carousel */}
-      <section className="py-20 bg-gray-900/50">
+      <section className="py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -302,7 +314,11 @@ const Homee = () => {
             <p className="text-gray-400">Restez informé avec la communauté dev</p>
           </div>
 
-          <div className="relative max-w-4xl mx-auto">
+          <div 
+            className="relative max-w-4xl mx-auto"
+            onMouseEnter={() => setIsAutoScrollPaused(true)}
+            onMouseLeave={() => setIsAutoScrollPaused(false)}
+          >
             <div className="overflow-hidden rounded-2xl bg-gray-800 border border-gray-700">
               {newsSlides.map((slide, index) => (
                 <div
@@ -375,7 +391,7 @@ const Homee = () => {
       </section>
 
       {/* Featured Challenges */}
-      <section className="py-20">
+      <section className="py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-bold mb-6">
@@ -533,10 +549,7 @@ const Homee = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-purple-900/30 to-teal-900/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)]" />
+      <section className="py-24 relative overflow-hidden">
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="max-w-4xl mx-auto">
@@ -582,8 +595,7 @@ const Homee = () => {
       </section>
 
       {/* Acknowledgements / Team Section */}
-      <section className="py-24 bg-gray-950 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(124,58,237,0.05),transparent_70%)]" />
+      <section className="py-24 relative overflow-hidden">
         
         <div className="max-w-7xl mx-auto px-5 relative z-10">
           <div className="text-center mb-20 space-y-4">
