@@ -77,10 +77,10 @@ export const teamData = {
     },
     {
       id: 8,
-      name: "Jean-Paul GNIKPO",
-      username: "@jeanpaul_gnikpo",
+      name: "Khaled SAROUKOU",
+      username: "@khaled_saroukou",
       role: "Dev Backend",
-      skill: "laravel",
+      skill: "JAVA",
       image: pote08,
       objectPosition: "top"
     },
