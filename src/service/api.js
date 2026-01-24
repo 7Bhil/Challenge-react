@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const isProduction = window.location.hostname !== 'localhost';
+const API_URL = isProduction 
+  ? 'https://challenge-express.onrender.com/api' 
+  : (import.meta.env.VITE_API_URL || 'http://localhost:5000/api');
 
 // Instance axios avec configuration par défaut
 const api = axios.create({
