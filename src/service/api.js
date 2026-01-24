@@ -244,6 +244,12 @@ export const adminService = {
   deleteChallenge: async (id) => {
     const response = await api.delete(`/admin/challenges/${id}`);
     return response.data;
+  },
+
+  // Supprimer un utilisateur
+  deleteUser: async (id) => {
+    const response = await api.delete(`/admin/users/${id}`);
+    return response.data;
   }
 };
 

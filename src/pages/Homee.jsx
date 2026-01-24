@@ -16,9 +16,11 @@ import {
   GitBranch,
   Coffee,
   Rocket,
+  Heart,
 } from "lucide-react";
 import { challengeService, userService, getRoleAvatar } from "../service/api";
 import { Link } from "react-router-dom";
+import { teamData } from "../data/team";
 
 const Homee = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -28,6 +30,7 @@ const Homee = () => {
   const [typedText, setTypedText] = useState("");
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [error, setError] = useState(null);
+  const [isAuth, setIsAuth] = useState(!!localStorage.getItem("token"));
 
   const codeWords = [
     "React",
@@ -81,52 +84,24 @@ const Homee = () => {
   const newsSlides = [
     {
       id: 1,
-      title: "New React 19 Mastery Challenge",
-      description: "Dive deep into the latest React features and concurrent rendering patterns. Prove your expertise in the newest framework version.",
+      title: "Nouveau Défi : Maîtrise de React 19",
+      description: "Plongez dans les dernières fonctionnalités de React 19 et les patterns de rendu concurrent. Prouvez votre expertise sur la toute dernière version.",
       image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=1200",
       category: "Frameworks",
-      date: "Oct 24, 2024"
+      date: "24 Oct, 2024"
     },
     {
       id: 2,
-      title: "FinTech Hackathon: Future of Payments",
-      description: "Join our exclusive hackathon focused on building secure, scalable payment gateways and blockchain integration.",
+      title: "Hackathon FinTech : L'Avenir des Paiements",
+      description: "Rejoignez notre hackathon exclusif axé sur la création de passerelles de paiement sécurisées et l'intégration de la blockchain.",
       image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200",
       category: "FinTech",
-      date: "Nov 02, 2024"
+      date: "02 Nov, 2024"
     }
   ];
 
-  const teamMembers = [
-    {
-      name: "Alex Rivera",
-      role: "Lead Architect",
-      specialty: "Distributed Systems",
-      github: "@arivera_dev",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=300&h=300"
-    },
-    {
-      name: "Sarah Chen",
-      role: "Security Lead",
-      specialty: "Cloud Architecture",
-      github: "@schen_sec",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?fit=crop&w=300&h=300"
-    },
-    {
-       name: "Marco Silva",
-       role: "Product Designer",
-       specialty: "UX/UI Design",
-       github: "@msilva_design",
-       image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?fit=crop&w=300&h=300"
-    },
-    {
-       name: "Elena Petrov",
-       role: "AI Research",
-       specialty: "Machine Learning",
-       github: "@epetrov_ai",
-       image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?fit=crop&w=300&h=300"
-    }
-  ];
+  const teamMembers = teamData.friends;
+  const creator = teamData.creator;
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % newsSlides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + newsSlides.length) % newsSlides.length);
@@ -135,7 +110,7 @@ const Homee = () => {
     const total = Date.parse(date) - Date.parse(new Date());
     if (total < 0) return "Terminé";
     const days = Math.floor(total / (1000 * 60 * 60 * 24));
-    return `${days}d remaining`;
+    return `${days}j restants`;
   };
 
   const determineChallengeType = (tech) => {
@@ -177,155 +152,154 @@ const Homee = () => {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden py-16 lg:py-0 top-0">
-        {/* ... Hero content unchanged ... */}
-        <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300D9FF' fill-opacity='1'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }}
-          />
-        </div>
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-16 lg:py-0">
+  {/* ... Hero content unchanged ... */}
+  <div className="absolute inset-0 opacity-10">
+    <div
+      className="absolute inset-0"
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300D9FF' fill-opacity='1'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+      }}
+    />
+  </div>
 
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-teal-900/20" />
+  <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-teal-900/20" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8 items-center text-center lg:text-left">
-            <div className="lg:pr-8">
-              <div className="mb-6">
-                <div className="inline-flex lg:self-start lg:mx-0 items-center gap-3 px-4 py-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full mb-6 mx-auto">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span className="text-sm text-gray-300 font-mono">
-                    Live challenges running
-                  </span>
-                </div>
+  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex items-center">
+    {/* Modifié ici : Supprimé h-full de la grid, ajouté flex items-center sur le conteneur parent */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8 items-center text-center lg:text-left w-full">
+      <div className="lg:pr-8">
+        <div className="mb-6">
+          <div className="inline-flex lg:self-start lg:mx-0 items-center gap-3 px-4 py-2 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full mb-6 mx-auto">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <span className="text-sm text-gray-300 font-mono">
+              Codons peu, codons mieux
+            </span>
+          </div>
 
-                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
-                  <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-teal-400 bg-clip-text text-transparent">
-                    Code.
-                  </span>
-                  <br className="lg:hidden" />
-                  <span className="bg-gradient-to-r from-teal-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                    Compete.
-                  </span>
-                  <br />
-                  <span className="text-white">Conquer.</span>
-                </h1>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
+            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-teal-400 bg-clip-text text-transparent">
+              Codez.
+            </span>
+            <br className="lg:hidden" />
+            <span className="bg-gradient-to-r from-teal-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Affrontez.
+            </span>
+            <br />
+            <span className="text-white italic">Dominez.</span>
+          </h1>
 
-                <div className="text-xl sm:text-2xl text-gray-400 mb-6 font-mono">
-                  <span>Master </span>
-                  <span className="text-blue-400 font-bold">
-                    {typedText}
-                    <span className="animate-pulse">|</span>
-                  </span>
-                  <span> challenges</span>
-                </div>
-              </div>
-
-              <p className="text-lg text-gray-300 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Rejoignez la communauté de développeurs la plus active. Relevez
-                des challenges techniques, montrez vos skills, et gagnez des
-                prix.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
-                <button className="group px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl flex items-center justify-center gap-2">
-                  <Rocket className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                  Start Coding
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
-                <button className="px-8 py-4 border border-gray-600 text-gray-300 hover:text-white hover:border-gray-500 font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-2">
-                  <Terminal className="w-4 h-4" />
-                  Explore Challenges
-                </button>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 lg:gap-8 mx-auto w-full">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-400 mb-2">
-                    1.2k+
-                  </div>
-                  <div className="text-gray-400 text-sm font-mono">
-                    Active Developers
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-400 mb-2">
-                    80+
-                  </div>
-                  <div className="text-gray-400 text-sm font-mono">
-                    Challenges Solved
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-teal-400 mb-2">
-                    45k€
-                  </div>
-                  <div className="text-gray-400 text-sm font-mono">
-                    Total Rewards
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden lg:flex justify-center items-center h-full">
-              {/* Podium Section */}
-              <div className="w-full max-w-md bg-gray-900/50 backdrop-blur-xl rounded-3xl border border-gray-800 p-8 shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Trophy className="w-32 h-32" />
-                </div>
-                
-                <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
-                  <Medal className="w-6 h-6 text-yellow-500" />
-                  Top Performers
-                </h3>
-
-                <div className="space-y-6">
-                  {topUsers.length > 0 ? topUsers.map((u, i) => (
-                    <div key={u._id || i} className="flex items-center gap-4 group/user">
-                      <div className="relative">
-                        <img 
-                          src={getRoleAvatar(u)} 
-                          className={`w-12 h-12 rounded-full border-2 ${i === 0 ? 'border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'border-gray-800 shadow-sm'}`}
-                          alt={u.name}
-                        />
-                        <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-gray-900 ${i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-300 text-black' : 'bg-orange-600 text-white'}`}>
-                          {i + 1}
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-bold text-sm group-hover/user:text-blue-400 transition-colors">{u.name}</div>
-                        <div className="text-xs text-gray-500">Lvl {u.level || 1} • {u.points || 0} pts</div>
-                      </div>
-                      <div className="text-xs font-mono text-gray-400">
-                        Top {(i + 1) * 1}%
-                      </div>
-                    </div>
-                  )) : (
-                    <div className="text-center py-10 text-gray-500 italic text-sm">
-                      Classement en cours...
-                    </div>
-                  )}
-                </div>
-
-                <Link to="/leaderboard" className="mt-8 block w-full py-3 bg-gray-800 hover:bg-gray-700 text-center rounded-xl text-sm font-semibold transition-all border border-gray-700">
-                  View Leaderboard
-                </Link>
-              </div>
-            </div>
+          <div className="text-xl sm:text-2xl text-gray-400 mb-6 font-mono">
+            <span>Maîtrisez les </span>
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent font-black px-2">
+              {typedText}
+              <span className="animate-pulse text-purple-500">|</span>
+            </span>
+            <span> défis</span>
           </div>
         </div>
-      </section>
+
+        <p className="text-lg text-gray-400 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
+          Propulsez votre carrière avec la plateforme de challenge technique la plus dynamique. Résolvez, apprenez, et connectez-vous avec les meilleurs.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-14">
+          <Link 
+            to={isAuth ? "/challenges" : "/register"}
+            className="group px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black rounded-2xl transition-all duration-500 transform hover:scale-105 shadow-2xl shadow-blue-900/20 flex items-center justify-center gap-3"
+          >
+            <Rocket className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+            Commencer l'aventure
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+          </Link>
+          <Link 
+            to="/challenges"
+            className="px-10 py-5 bg-gray-900/50 border border-gray-800 text-gray-300 hover:text-white hover:bg-gray-800 hover:border-gray-700 font-bold rounded-2xl transition-all duration-300 backdrop-blur-xl flex items-center justify-center gap-3"
+          >
+            <Terminal className="w-5 h-5" />
+            Explorer les Défis
+          </Link>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-8 justify-center lg:justify-start">
+          <div className="space-y-1">
+            <div className="text-3xl font-black text-white">1.2k+</div>
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Développeurs</div>
+          </div>
+          <div className="w-px h-10 bg-gray-800 hidden sm:block" />
+          <div className="space-y-1">
+            <div className="text-3xl font-black text-white">80+</div>
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Challenges</div>
+          </div>
+          <div className="w-px h-10 bg-gray-800 hidden sm:block" />
+          <div className="space-y-1">
+            <div className="text-3xl font-black text-white">45k€</div>
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Récompenses</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="hidden lg:flex justify-center items-center">
+        {/* Podium Section */}
+        <div className="w-full max-w-md bg-gray-900/50 backdrop-blur-xl rounded-3xl border border-gray-800 p-8 shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <Trophy className="w-32 h-32" />
+          </div>
+          
+          <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
+            <Medal className="w-6 h-6 text-yellow-500" />
+            Meilleurs Participants
+          </h3>
+
+          <div className="space-y-6">
+            {topUsers.length > 0 ? topUsers.map((u, i) => (
+              <Link 
+                key={u._id || i} 
+                to={`/profile/${u._id}`}
+                className="flex items-center gap-4 group/user hover:bg-white/5 p-2 rounded-xl transition-all"
+              >
+                <div className="relative">
+                  <img 
+                    src={getRoleAvatar(u)} 
+                    className={`w-12 h-12 rounded-full border-2 ${i === 0 ? 'border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'border-gray-800 shadow-sm'}`}
+                    alt={u.name}
+                  />
+                  <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-gray-900 ${i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-300 text-black' : 'bg-orange-600 text-white'}`}>
+                    {i + 1}
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="font-bold text-sm group-hover/user:text-blue-400 transition-colors">{u.name}</div>
+                  <div className="text-xs text-gray-500">Lvl {u.level || 1} • {u.points || 0} pts</div>
+                </div>
+                <div className="text-xs font-mono text-gray-400">
+                  Top {(i + 1) * 1}%
+                </div>
+              </Link>
+            )) : (
+              <div className="text-center py-10 text-gray-500 italic text-sm">
+                Classement en cours...
+              </div>
+            )}
+          </div>
+
+          <Link to="/leaderboard" className="mt-8 block w-full py-3 bg-gray-800 hover:bg-gray-700 text-center rounded-xl text-sm font-semibold transition-all border border-gray-700">
+            Voir le Classement
+          </Link>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* News Carousel */}
       <section className="py-20 bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Latest Updates
+              Dernières Mises à Jour
             </h2>
-            <p className="text-gray-400">Stay updated with the dev community</p>
+            <p className="text-gray-400">Restez informé avec la communauté dev</p>
           </div>
 
           <div className="relative max-w-4xl mx-auto">
@@ -358,9 +332,12 @@ const Homee = () => {
                       <p className="text-gray-400 mb-6 leading-relaxed">
                         {slide.description}
                       </p>
-                      <button className="self-start px-6 py-2 text-blue-400 hover:text-blue-300 font-medium transition-colors flex items-center gap-2">
-                        Read more <ArrowRight className="w-4 h-4" />
-                      </button>
+                      <Link 
+                        to="/challenges"
+                        className="self-start px-6 py-2 text-blue-400 hover:text-blue-300 font-medium transition-colors flex items-center gap-2"
+                      >
+                        Lire la suite <ArrowRight className="w-4 h-4" />
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -403,11 +380,11 @@ const Homee = () => {
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-bold mb-6">
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Featured Challenges
+                Défis à la Une
               </span>
             </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Premium challenges with bigger rewards and real-world impact
+              Des défis premium avec des récompenses plus importantes et un impact réel
             </p>
           </div>
 
@@ -438,7 +415,7 @@ const Homee = () => {
                     </div>
                     <div className="flex items-center gap-2 text-yellow-400">
                       <Star className="w-4 h-4 fill-current" />
-                      <span className="text-sm font-mono">Featured</span>
+                      <span className="text-sm font-mono">Vedette</span>
                     </div>
                   </div>
 
@@ -476,10 +453,13 @@ const Homee = () => {
                     </div>
                   </div>
 
-                  <button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                  <Link 
+                    to={`/challenge/${challenge.id}`}
+                    className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                  >
                     <Play className="w-5 h-5" />
-                    Accept Challenge
-                  </button>
+                    Accepter le Défi
+                  </Link>
                 </div>
               </div>
             ))}
@@ -539,9 +519,12 @@ const Homee = () => {
                       <span className="font-mono">{challenge.timeLeft}</span>
                     </div>
                   </div>
-                  <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-sm">
-                    Join
-                  </button>
+                  <Link 
+                    to={`/challenge/${challenge.id}`}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-sm"
+                  >
+                    Rejoindre
+                  </Link>
                 </div>
               </div>
             ))}
@@ -565,69 +548,117 @@ const Homee = () => {
             </div>
 
             <h2 className="text-4xl sm:text-6xl font-bold mb-8">
-              Ready to{" "}
+              Prêt à{" "}
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                level up
+                progresser
               </span>
               ?
             </h2>
 
             <p className="text-xl text-gray-300 mb-12 leading-relaxed">
-              Join thousands of developers pushing their limits. Learn, compete,
-              win.
+              Rejoignez des milliers de développeurs qui repoussent leurs limites. Apprenez, concourez, gagnez.
               <br />
-              No fluff, just pure coding challenges.
+              Pas de chichi, juste du pur challenge technique.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button className="group px-10 py-5 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl flex items-center justify-center gap-3">
+              <Link 
+                to={isAuth ? "/challenges" : "/register"}
+                className="group px-10 py-5 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl flex items-center justify-center gap-3"
+              >
                 <Brain className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                Start Your Journey
+                Commencer l'aventure
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button className="px-10 py-5 border border-gray-600 text-gray-300 hover:text-white hover:border-gray-500 font-bold text-lg rounded-lg transition-all duration-300">
-                Browse Challenges
-              </button>
+              </Link>
+              <Link 
+                to="/challenges"
+                className="px-10 py-5 border border-gray-600 text-gray-300 hover:text-white hover:border-gray-500 font-bold text-lg rounded-lg transition-all duration-300"
+              >
+                Parcourir les Défis
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Team Section */}
-      <section className="py-20 bg-gray-900/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-6">Core Team</h2>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Senior engineers who review your code and guide the community
+      {/* Acknowledgements / Team Section */}
+      <section className="py-24 bg-gray-950 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(124,58,237,0.05),transparent_70%)]" />
+        
+        <div className="max-w-7xl mx-auto px-5 relative z-10">
+          <div className="text-center mb-20 space-y-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 rounded-full border border-purple-500/20 text-[10px] font-bold text-purple-400 uppercase tracking-[0.3em] mx-auto animate-bounce">
+              <Heart className="w-3 h-3 fill-current" /> Nos Remerciements
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black italic tracking-tighter">
+              Merci à ceux qui <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent underline decoration-purple-500/30 underline-offset-8">Propulsent l'Innovation</span>
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto font-medium leading-relaxed">
+              Une plateforme développée par des passionnés pour des passionnés. On salue les talents qui nous inspirent au quotidien.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
-              <div key={index} className="group text-center">
-                <div className="relative mb-6">
-                  <div className="relative overflow-hidden rounded-2xl w-48 h-48 mx-auto bg-gray-800 border border-gray-700 group-hover:border-blue-500/50 transition-all duration-300">
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="text-xs font-mono text-blue-400 mb-1">
-                        {member.github}
-                      </div>
+              <div 
+                key={member.id} 
+                className="group relative"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="relative aspect-square overflow-hidden rounded-[2.5rem] bg-gray-900 border border-gray-800 group-hover:border-purple-500/50 transition-all duration-500 shadow-xl group-hover:shadow-purple-500/10 group-hover:-translate-y-2">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100 grayscale hover:grayscale-0 transition-all"
+                    style={{ objectPosition: member.objectPosition || 'center' }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-60" />
+                  
+                  <div className="absolute bottom-6 left-6 right-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                    <div className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">{member.username}</div>
+                    <div className="flex gap-2">
+                         <div className="w-1.5 h-1.5 bg-green-400 rounded-full mt-1 animate-pulse" />
+                         <div className="text-xs text-gray-300 font-medium italic">{member.skill}</div>
                     </div>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold mb-2">{member.name}</h3>
-                <p className="text-blue-400 font-medium mb-2">{member.role}</p>
-                <p className="text-gray-400 text-sm font-mono">
-                  {member.specialty}
-                </p>
+                
+                <div className="mt-5 px-2">
+                    <h3 className="text-lg font-bold group-hover:text-white transition-colors">{member.name}</h3>
+                    <p className="text-sm text-gray-500 font-mono">{member.role}</p>
+                </div>
               </div>
             ))}
+          </div>
+
+          {/* Creator Focus */}
+          <div className="mt-32 p-10 md:p-16 rounded-[4rem] bg-gradient-to-br from-gray-900 via-gray-900 to-purple-950/20 border border-gray-800 shadow-3xl relative overflow-hidden">
+             <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
+                 <Rocket size={300} className="rotate-45" />
+             </div>
+             
+             <div className="flex flex-col md:flex-row items-center gap-10 relative z-10 text-center md:text-left">
+                <div className="relative">
+                    <div className="w-40 h-40 md:w-48 md:h-48 rounded-[3rem] overflow-hidden border-4 border-white/5 shadow-2xl rotate-3 group hover:rotate-0 transition-transform duration-500">
+                        <img src={creator.image} className="w-full h-full object-cover" alt={creator.name} />
+                    </div>
+                    <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg border-4 border-gray-900">
+                        <Code size={20} />
+                    </div>
+                </div>
+                
+                <div className="flex-1 space-y-4">
+                    <h4 className="text-blue-400 font-bold uppercase tracking-[0.2em] text-xs">Propulsé par</h4>
+                    <h3 className="text-4xl md:text-5xl font-black tracking-tighter italic text-white">{creator.name}</h3>
+                    <p className="text-lg text-gray-400 font-medium leading-relaxed max-w-xl">
+                        {creator.bio}
+                    </p>
+                    <div className="flex items-center gap-4 justify-center md:justify-start pt-4">
+                        <div className="px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold text-gray-300">#OpenSource</div>
+                        <div className="px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold text-gray-300">#WebDevelopment</div>
+                    </div>
+                </div>
+             </div>
           </div>
         </div>
       </section>

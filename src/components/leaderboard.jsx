@@ -111,28 +111,32 @@ const Leaderboard = () => {
           <>
             {/* Podium */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-               {rankings.slice(0, 3).map((user, i) => (
-                 <div key={user._id || i} className={`relative p-8 rounded-3xl border ${i === 0 ? 'bg-gradient-to-br from-yellow-500/10 to-transparent border-yellow-500/20' : 'bg-gray-900/50 border-gray-800'} overflow-hidden`}>
-                    {i === 0 && <Star className="absolute top-4 right-4 w-6 h-6 text-yellow-500/20" />}
-                    <div className="flex flex-col items-center text-center">
-                       <div className="relative mb-4">
-                           <img 
-                             src={getRoleAvatar(user)} 
-                             className="w-20 h-20 rounded-full border-2 border-gray-800 shadow-lg" 
-                             alt={user.name} 
-                           />
-                          <div className={`absolute -bottom-2 right-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ring-4 ring-gray-950 ${i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-300 text-black' : 'bg-orange-600 text-white'}`}>
-                            {i + 1}
-                          </div>
-                       </div>
-                       <div className="font-bold text-lg mb-1">{user.name}</div>
-                       <div className="text-sm text-gray-400 mb-4">{user.points} points</div>
-                       <div className="flex items-center gap-2 px-3 py-1 bg-gray-950 rounded-full border border-gray-800 text-[10px] font-bold text-purple-400 uppercase tracking-widest">
-                          Lvl {user.level || 1}
-                       </div>
-                    </div>
-                 </div>
-               ))}
+                {rankings.slice(0, 3).map((user, i) => (
+                  <Link 
+                    key={user._id || i} 
+                    to={`/profile/${user._id || user.id}`}
+                    className={`relative p-8 rounded-3xl border ${i === 0 ? 'bg-gradient-to-br from-yellow-500/10 to-transparent border-yellow-500/20' : 'bg-gray-900/50 border-gray-800'} overflow-hidden block transition-all hover:scale-[1.02] hover:border-purple-500/30 group`}
+                  >
+                     {i === 0 && <Star className="absolute top-4 right-4 w-6 h-6 text-yellow-500/20 group-hover:text-yellow-500/40 transition-colors" />}
+                     <div className="flex flex-col items-center text-center">
+                        <div className="relative mb-4">
+                            <img 
+                              src={getRoleAvatar(user)} 
+                              className="w-20 h-20 rounded-full border-2 border-gray-800 shadow-lg group-hover:border-purple-500/50 transition-all" 
+                              alt={user.name} 
+                            />
+                           <div className={`absolute -bottom-2 right-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ring-4 ring-gray-950 ${i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-300 text-black' : 'bg-orange-600 text-white'}`}>
+                             {i + 1}
+                           </div>
+                        </div>
+                        <div className="font-bold text-lg mb-1 group-hover:text-purple-400 transition-colors">{user.name}</div>
+                        <div className="text-sm text-gray-400 mb-4">{user.points} points</div>
+                        <div className="flex items-center gap-2 px-3 py-1 bg-gray-950 rounded-full border border-gray-800 text-[10px] font-bold text-purple-400 uppercase tracking-widest">
+                           Lvl {user.level || 1}
+                        </div>
+                     </div>
+                  </Link>
+                ))}
             </div>
 
             {/* General List Search */}

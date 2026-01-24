@@ -2,6 +2,7 @@ import { BrowserRouter, useLocation } from "react-router-dom"; // <-- NOUVEAU: I
 import AppRoutes from "./routes/Route";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
+import ScrollToTop from "./components/layout/ScrollToTop";
 
 // Composant interne pour gérer la mise en page conditionnelle
 function Layout() {
@@ -15,6 +16,7 @@ function Layout() {
 
   return (
     <>
+      <ScrollToTop />
       {/* Condition: Afficher Navbar UNIQUEMENT si shouldHideLayout est false */}
       {!shouldHideLayout && <Navbar />}
       

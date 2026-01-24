@@ -1,5 +1,6 @@
 import React from 'react';
-import { Terminal, Github, Twitter, Linkedin, Youtube } from 'lucide-react';
+import { Terminal, Github,  Linkedin, Mail } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -23,22 +24,45 @@ const Footer = () => {
               </span>
             </Link>
             <p className="text-sm">
-              Sharpen your skills, tackle challenges, and join a vibrant community of developers.
+              Perfectionnez vos compétences, relevez des défis et rejoignez une communauté vibrante de développeurs.
             </p>
             <div className="flex space-x-4 mt-6">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                <Github className="w-5 h-5" />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                <Youtube className="w-5 h-5" />
-              </a>
-            </div>
+  <a 
+    href="https://github.com/7Bhil" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className="text-gray-400 hover:text-white transition-colors"
+  >
+    <Github className="w-5 h-5" />
+  </a>
+  <a 
+    href="https://wa.me/2290198874019" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className="text-gray-400 hover:text-white transition-colors"
+    title="Contact WhatsApp"
+  >
+    {/* Tu devras importer une icône WhatsApp ou utiliser une alternative */}
+   <FaWhatsapp className="w-5 h-5" /> {/* Utilise Phone comme icône temporaire */}
+  </a>
+  <a 
+    href="mailto:7bhilal.chitou7@gmail.com" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className="text-gray-400 hover:text-white transition-colors"
+    title="Envoyer un email"
+  >
+    <Mail className="w-5 h-5" /> {/* Ou utilise l'icône Mail */}
+  </a>
+  <a 
+    href="https://linkedin.com" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className="text-gray-400 hover:text-white transition-colors"
+  >
+    <Linkedin className="w-5 h-5" />
+  </a>
+</div>
           </div>
 
           {/* Column 2: Navigation */}
@@ -46,26 +70,23 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-white mb-4">Navigation</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="hover:text-blue-400 transition-colors">Home</Link>
+                <Link to="/" className="hover:text-blue-400 transition-colors">Accueil</Link>
               </li>
               <li>
-                <Link to="/challenges" className="hover:text-blue-400 transition-colors">Challenges</Link>
+                <Link to="/challenges" className="hover:text-blue-400 transition-colors">Défis</Link>
               </li>
               <li>
-                <Link to="/leaderboard" className="hover:text-blue-400 transition-colors">Leaderboard</Link>
+                <Link to="/leaderboard" className="hover:text-blue-400 transition-colors">Classement</Link>
               </li>
               <li>
-                <Link to="/community" className="hover:text-blue-400 transition-colors">Community</Link>
-              </li>
-              <li>
-                <Link to="/pricing" className="hover:text-blue-400 transition-colors">Pricing</Link>
+                <Link to="/community" className="hover:text-blue-400 transition-colors">Communauté</Link>
               </li>
             </ul>
           </div>
 
           {/* Column 3: Resources */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Resources</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">Ressources</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/blog" className="hover:text-blue-400 transition-colors">Blog</Link>
@@ -79,27 +100,24 @@ const Footer = () => {
               <li>
                 <Link to="/docs" className="hover:text-blue-400 transition-colors">Documentation</Link>
               </li>
-              <li>
-                <Link to="/api" className="hover:text-blue-400 transition-colors">API</Link>
-              </li>
             </ul>
           </div>
 
           {/* Column 4: Legal */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">Légal</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/privacy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link>
+                <Link to="/privacy" className="hover:text-blue-400 transition-colors">Confidentialité</Link>
               </li>
               <li>
-                <Link to="/terms" className="hover:text-blue-400 transition-colors">Terms of Service</Link>
+                <Link to="/terms" className="hover:text-blue-400 transition-colors">Conditions d'utilisation</Link>
               </li>
               <li>
-                <Link to="/cookies" className="hover:text-blue-400 transition-colors">Cookie Policy</Link>
+                <Link to="/cookies" className="hover:text-blue-400 transition-colors">Cookies</Link>
               </li>
               <li>
-                <Link to="/security" className="hover:text-blue-400 transition-colors">Security</Link>
+                <Link to="/security" className="hover:text-blue-400 transition-colors">Sécurité</Link>
               </li>
             </ul>
           </div>
@@ -107,7 +125,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="mt-10 pt-6 border-t border-gray-800 text-center text-sm">
-          &copy; {currentYear} DevChallenge. All rights reserved.
+          &copy; {currentYear} DevChallenge. Tous droits réservés.
         </div>
       </div>
     </footer>

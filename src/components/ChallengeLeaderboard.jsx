@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { challengeService, getRoleAvatar } from '../service/api';
 
 const ChallengeLeaderboard = ({ challengeId }) => {
@@ -92,7 +93,7 @@ const ChallengeLeaderboard = ({ challengeId }) => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center">
+                    <Link to={`/profile/${submission.user?._id || submission.user?.id}`} className="flex items-center group/user">
                       <img 
                         src={getRoleAvatar(submission.user)} 
                         alt={submission.user?.name} 
@@ -104,7 +105,7 @@ const ChallengeLeaderboard = ({ challengeId }) => {
                         </p>
                         <p className="text-xs text-gray-400">Niveau {submission.user?.level || 1}</p>
                       </div>
-                    </div>
+                    </Link>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">

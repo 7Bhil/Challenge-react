@@ -13,6 +13,7 @@ import {
   XCircle,
   AlertTriangle
 } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 import { userService, adminService, getRoleAvatar } from "../../service/api";
 
 const UserManagement = () => {
@@ -53,6 +54,24 @@ const UserManagement = () => {
       }
     } catch (err) {
       alert("Erreur lors du changement de rôle");
+      console.error(err);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible et supprimera également toutes ses soumissions.")) return;
+
+    setActionLoading(userId);
+    try {
+      const response = await adminService.deleteUser(userId);
+      if (response.success) {
+        setUsers(users.filter(u => u._id !== userId));
+        alert("Utilisateur supprimé avec succès");
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || "Erreur lors de la suppression de l'utilisateur");
       console.error(err);
     } finally {
       setActionLoading(null);
@@ -155,21 +174,20 @@ const UserManagement = () => {
                   return (
                   <tr key={user._id} className={`hover:bg-gray-800/30 transition-colors group ${isSelf ? 'bg-purple-500/5' : ''}`}>
                     <td className="px-6 py-4">
-                      {/* ... user info ... */}
-                      <div className="flex items-center gap-3">
+                      <Link to={`/profile/${user._id}`} className="flex items-center gap-3 group/userinfo">
                         <img 
                           src={getRoleAvatar(user)} 
-                          className="w-10 h-10 rounded-full border border-gray-800"
+                          className="w-10 h-10 rounded-full border border-gray-800 group-hover/userinfo:border-purple-500/50 transition-all shadow-sm"
                           alt={user.name}
                         />
                         <div>
-                          <div className="font-bold text-white group-hover:text-purple-400 transition-colors">
+                          <div className="font-bold text-white group-hover/userinfo:text-purple-400 transition-colors">
                             {user.name}
                             {isSelf && <span className="ml-2 text-[10px] bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Vous</span>}
                           </div>
                           <div className="text-xs text-gray-500">{user.email}</div>
                         </div>
-                      </div>
+                      </Link>
                     </td>
                     <td className="px-6 py-4">
                       <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-bold ${getRoleBadgeClass(user.role)}`}>
