@@ -12,9 +12,9 @@ import me from '../assets/me.jpeg';
 export const teamData = {
   creator: {
     name: "Bhil$",
-    role: "Fullstack Developer & Visionary",
+    role: "Fullstack Developer & Expert en Cyber Sécurité",
     image: me,
-    username: "@bhil_dev",
+    username: "@Bhil$",
     bio: "Passionné par la tech et l'innovation, créateur de cette plateforme de challenge."
   },
   friends: [
@@ -46,7 +46,7 @@ export const teamData = {
       id: 4,
       name: "Jolidon HOUNGUE",
       username: "@jolidon_hounge",
-      role: "Dev Frontend && Expert Cyber Sécurité",
+      role: "Dev Frontend && Analist Cyber Sécurité",
       skill: "React, Vue, Réseau",
       image: pote04
     },
@@ -71,8 +71,8 @@ export const teamData = {
       id: 7,
       name: "Jean-Paul GNIKPO",
       username: "@jeanpaul_gnikpo",
-      role: "Dev Backend",
-      skill: "laravel",
+      role: "Spécialist Backend",
+      skill: "Expert Laravel",
       image: pote07,
     },
     {
