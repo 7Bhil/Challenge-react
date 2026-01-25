@@ -7,6 +7,7 @@ import pote06 from '../assets/pote06.jpeg';
 import pote07 from '../assets/pote07.jpeg';
 import pote08 from '../assets/pote08.jpeg';
 import pote09 from '../assets/pote09.jpeg';
+import pote10 from '../assets/pote10.jpeg'; 
 import me from '../assets/me.jpeg';
 
 export const teamData = {
@@ -89,9 +90,17 @@ export const teamData = {
       name: "Marcos BATAMOUSSI",
       username: "@marcos_batamoussi",
       role: "Dev Fullstack",
-      skill: "Django, Next",
+      skill: "Django, Express et React",
       image: pote09,
       objectPosition: "top"
+    },
+    {
+      id: 10,
+      name: "Assuma Billa",
+      username: "@assuma_billa",
+      role: "Dev Fullstack",
+      skill: "Django, React",
+      image: pote10,
     }
   ]
 };
