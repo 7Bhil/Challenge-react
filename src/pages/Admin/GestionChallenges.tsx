@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { challengeService } from '../../service/api';
+import { challengeService, adminService } from '../../service/api';
 
 // Définition de l'interface pour un challenge (alignée avec le backend)
 interface Challenge {
@@ -34,6 +34,20 @@ const AdminChallenges = () => {
       console.error("Erreur chargement challenges:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce challenge ?")) {
+      try {
+        const response = await adminService.deleteChallenge(id);
+        if (response.success) {
+          fetchChallenges();
+        }
+      } catch (err: any) {
+        console.error("Erreur suppression:", err);
+        alert(err.response?.data?.message || "Erreur lors de la suppression");
+      }
     }
   };
 
@@ -189,6 +203,13 @@ const AdminChallenges = () => {
                           >
                             <FaEdit size={16} />
                           </Link>
+                          <button
+                            onClick={() => handleDelete(challenge._id)}
+                            className="p-2 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white rounded-lg transition-all"
+                            title="Supprimer"
+                          >
+                            <FaTrash size={16} />
+                          </button>
                         </div>
                       </td>
                     </tr>

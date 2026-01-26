@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { FaStar, FaLink, FaUser, FaSearch, FaCheck, FaTimes } from 'react-icons/fa';
-import { submissionService } from '../service/api';
+import { FaStar, FaLink, FaUser, FaSearch, FaCheck, FaTimes, FaArrowLeft } from 'react-icons/fa';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
+import { submissionService, challengeService } from '../service/api';
 
 const JurySubmissions = () => {
+  const { challengeId } = useParams();
+  const navigate = useNavigate();
+  const [challenge, setChallenge] = useState(null);
   const [submissions, setSubmissions] = useState([]);
   const [filteredSubmissions, setFilteredSubmissions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,24 +24,50 @@ const JurySubmissions = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchSubmissions();
-  }, []);
+    fetchData();
+  }, [challengeId]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch challenge details
+      if (challengeId) {
+        const cResp = await challengeService.getById(challengeId);
+        if (cResp.success) setChallenge(cResp.data);
+      }
+
+      await fetchSubmissions();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchSubmissions = async () => {
     try {
-      setLoading(true);
-      const response = await submissionService.getAll({ status: 'pending,under_review' });
+      const filters = { status: 'pending,under_review' };
+      if (challengeId) filters.challengeId = challengeId;
+      
+      const response = await submissionService.getAll(filters);
       if (response.success) {
         // Obtenir l'utilisateur actuel (Jury)
         const currentUser = JSON.parse(localStorage.getItem('user'));
         
+        let data = response.data;
+        
+        // Filter by challengeId if not handled by backend (safeguard)
+        if (challengeId) {
+          data = data.filter(sub => sub.challenge?._id === challengeId || sub.challenge === challengeId);
+        }
+
         // Filtrer les soumissions déjà notées par ce jury
-        const pendingForMe = response.data.filter(sub => {
-          // Si pas de scores, c'est bon
+        const pendingForMe = data.filter(sub => {
           if (!sub.scores || sub.scores.length === 0) return true;
-          
-          // Vérifier si j'ai déjà noté
-          const hasVoted = sub.scores.some(score => score.jury._id === currentUser.id || score.jury === currentUser.id);
+          const hasVoted = sub.scores.some(score => 
+            (score.jury?._id ? score.jury._id.toString() : score.jury.toString()) === (currentUser.id || currentUser._id).toString()
+          );
           return !hasVoted;
         });
 
@@ -46,8 +76,6 @@ const JurySubmissions = () => {
       }
     } catch (error) {
       console.error("Error fetching submissions:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -147,8 +175,20 @@ const JurySubmissions = () => {
         <div className="bg-gray-800 shadow-2xl rounded-xl overflow-hidden border border-gray-700">
           {/* En-tête */}
           <div className="bg-gradient-to-r from-blue-900 to-purple-900 p-6 text-white border-b border-gray-700">
-            <h1 className="text-2xl font-bold">Évaluations des Soumissions</h1>
-            <p className="mt-2 text-gray-300">Évaluez les travaux soumis par les participants</p>
+            <div className="flex items-center gap-4 mb-2">
+              <button 
+                onClick={() => navigate('/jury/dashboard')}
+                className="p-2 hover:bg-white/10 rounded-lg transition-all"
+              >
+                <FaArrowLeft />
+              </button>
+              <h1 className="text-2xl font-bold">
+                {challenge ? `Soumissions : ${challenge.title}` : 'Évaluations des Soumissions'}
+              </h1>
+            </div>
+            <p className="mt-2 text-gray-300 ml-10">
+              {challenge ? `Niveau: ${challenge.difficulty} • Technos: ${challenge.technologies?.join(', ')}` : 'Évaluez les travaux soumis par les participants'}
+            </p>
           </div>
 
           {/* Barre de recherche */}

@@ -112,30 +112,26 @@ const ChallengeDetail = () => {
     <div className="min-h-screen bg-gray-900 text-gray-100">
       <div className="container mx-auto px-4 py-8 mt-14">
         {/* Breadcrumb */}
-        <nav className="flex mb-6" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
+        <nav className="flex mb-6 overflow-x-auto no-scrollbar scroll-smooth" aria-label="Breadcrumb">
+          <ol className="inline-flex items-center space-x-1 md:space-x-3 whitespace-nowrap">
             <li className="inline-flex items-center">
-              <Link to="/" className="text-purple-400 hover:text-purple-300 transition-colors">
+              <Link to="/" className="text-purple-400 hover:text-purple-300 transition-colors text-sm">
                 Accueil
               </Link>
             </li>
-            <li>
-              <div className="flex items-center">
-                <svg className="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path>
-                </svg>
-                <Link to="/challenges" className="ml-1 text-purple-400 hover:text-purple-300 md:ml-2 transition-colors">
-                  Défis
-                </Link>
-              </div>
+            <li className="flex items-center">
+              <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path>
+              </svg>
+              <Link to="/challenges" className="ml-1 text-purple-400 hover:text-purple-300 text-sm transition-colors">
+                Défis
+              </Link>
             </li>
-            <li aria-current="page">
-              <div className="flex items-center">
-                <svg className="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path>
-                </svg>
-                <span className="ml-1 text-gray-400 md:ml-2">{challenge.title}</span>
-              </div>
+            <li aria-current="page" className="flex items-center">
+              <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path>
+              </svg>
+              <span className="ml-1 text-gray-400 text-sm truncate max-w-[150px] sm:max-w-none">{challenge.title}</span>
             </li>
           </ol>
         </nav>
@@ -176,20 +172,20 @@ const ChallengeDetail = () => {
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-3 gap-4 mb-6 bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
-                <div className="text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm shadow-inner">
+                <div className="text-center py-2 sm:py-0">
                    <span className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">XP Gain</span>
                    <p className="text-xl font-bold text-yellow-400">
                       +{challenge.xpPoints || 0}
                    </p>
                 </div>
-                <div className="text-center border-l border-gray-700">
+                <div className="text-center py-2 sm:py-0 border-t sm:border-t-0 sm:border-l border-gray-700">
                    <span className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Cash Prize</span>
                    <p className="text-xl font-bold text-green-400">
                       {challenge.financialReward ? `${challenge.financialReward.toLocaleString()} FCFA` : '-'}
                    </p>
                 </div>
-                <div className="text-center border-l border-gray-700">
+                <div className="text-center py-2 sm:py-0 border-t sm:border-t-0 sm:border-l border-gray-700">
                   <span className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Participants</span>
                   <p className="text-xl font-bold text-blue-400">{challenge.participantCount || 0}</p>
                 </div>

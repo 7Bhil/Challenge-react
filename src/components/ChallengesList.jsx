@@ -98,12 +98,12 @@ const ChallengesList = () => {
             />
           </div>
           
-          <div className="flex items-center gap-2 px-2">
+          <div className="flex items-center gap-2 px-2 overflow-x-auto no-scrollbar pb-1 md:pb-0">
             {[ "All", "Facile", "Moyen", "Difficile" ].map((diff) => (
               <button
                 key={diff}
                 onClick={() => setFilter(diff)}
-                className={`px-6 py-3 rounded-xl text-sm font-bold transition-all ${
+                className={`px-4 sm:px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
                   filter === diff 
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
                   : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800'

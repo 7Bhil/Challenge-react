@@ -13,6 +13,8 @@ import EditChallenge from "../pages/Admin/ModifChallenge";
 import UserManagement from "../pages/Admin/UserManagement";
 import SuperAdminChallenges from "../pages/SuperAdmin/AllChallenges";
 import ChallengeValidation from "../pages/SuperAdmin/ChallengeValidation";
+import NotificationsPage from "../pages/Notifications";
+import JuryDashboard from "../pages/Jury/JuryDashboard";
 
 export default function AppRoutes() {
   return (
@@ -26,6 +28,7 @@ export default function AppRoutes() {
         <Route path="/profile/:userId" element={<Profil />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
         
         {/* Admin Routes */}
         <Route path="/creation-challenge" element={<CreateChallenge />} />
@@ -36,7 +39,11 @@ export default function AppRoutes() {
         {/* SuperAdmin Routes */}
         <Route path="/admin/users" element={<UserManagement />} />
         <Route path="/admin/validation" element={<ChallengeValidation />} />
-        <Route path="/jury/submissions" element={<JurySubmissions />} />
+        
+        {/* Jury Routes */}
+        <Route path="/jury/dashboard" element={<JuryDashboard />} />
+        <Route path="/jury/submissions" element={<JuryDashboard />} />
+        <Route path="/jury/submissions/:challengeId" element={<JurySubmissions />} />
       </Routes>
 
     </>

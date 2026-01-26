@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getRoleAvatar } from "../../service/api";
+import NotificationCenter from "../notifications/NotificationCenter";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,6 +59,18 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [menuOpen]);
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -74,6 +87,7 @@ const Navbar = () => {
     const baseLinks = [
       { path: "/", label: "Home", Icon: Home },
       { path: "/challenges", label: "Challenges", Icon: Code },
+      { path: "/notifications", label: "Notifications", Icon: Bell },
     ];
 
     const role = user?.role;
@@ -99,7 +113,7 @@ const Navbar = () => {
     if (role === 'Jury') {
       return [
         ...baseLinks,
-        { path: "/jury/submissions", label: "Notations", Icon: Star },
+        { path: "/jury/dashboard", label: "Dashboard Jury", Icon: Star },
         { path: "/leaderboard", label: "Leaderboard", Icon: Trophy },
       ];
     }
@@ -171,7 +185,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-1">
             {links.map(({ path, label, Icon }) => (
               <Link
                 key={path}
@@ -189,7 +203,7 @@ const Navbar = () => {
           </div>
 
           {/* Right Side */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-4">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -202,10 +216,7 @@ const Navbar = () => {
 
             {loggedIn ? (
               <>
-                <button className="relative p-2 text-gray-400 hover:text-white transition">
-                  <Bell className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
-                </button>
+            {loggedIn && <NotificationCenter />}
 
                 {/* Dropdown */}
                 <div className="relative" ref={dropRef}>
@@ -352,7 +363,7 @@ const Navbar = () => {
           {/* Mobile Toggle */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 text-gray-400 hover:text-white transition"
+            className="lg:hidden p-2 text-gray-400 hover:text-white transition"
           >
             {menuOpen ? (
               <X className="w-6 h-6" />
@@ -364,11 +375,11 @@ const Navbar = () => {
 </div>
       {/* Mobile Drawer */}
       <div 
-        className={`md:hidden fixed inset-x-0 top-16 bg-gray-900 border-t border-gray-800 shadow-2xl transition-all duration-300 ease-in-out transform overflow-hidden ${
-          menuOpen ? "max-h-[calc(100vh-4rem)] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-4"
+        className={`lg:hidden fixed inset-x-0 top-16 bg-gray-900 border-t border-gray-800 shadow-2xl transition-all duration-300 ease-in-out transform ${
+          menuOpen ? "h-[calc(100vh-4rem)] opacity-100 translate-y-0" : "h-0 opacity-0 -translate-y-4 pointer-events-none"
         }`}
       >
-        <div className="px-5 py-6 space-y-6 overflow-y-auto max-h-[calc(100vh-6rem)]">
+        <div className="px-5 py-6 space-y-6 overflow-y-auto h-full pb-20">
           {/* Mobile User Profile */}
           {loggedIn ? (
             <div className="flex items-center gap-4 p-4 bg-gray-800/50 rounded-2xl border border-gray-700">
