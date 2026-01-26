@@ -87,7 +87,6 @@ const Navbar = () => {
     const baseLinks = [
       { path: "/", label: "Home", Icon: Home },
       { path: "/challenges", label: "Challenges", Icon: Code },
-      { path: "/notifications", label: "Notifications", Icon: Bell },
     ];
 
     const role = user?.role;
@@ -98,6 +97,7 @@ const Navbar = () => {
         { path: "/admin/users", label: "Gestion Users", Icon: Users },
         { path: "/admin/all-challenges", label: "Gestion Challenges", Icon: Shield },
         { path: "/leaderboard", label: "Leaderboard", Icon: Trophy },
+        { path: "/community", label: "Community", Icon: Users },
       ];
     }
 
@@ -107,6 +107,7 @@ const Navbar = () => {
         { path: "/admin/users", label: "Gestion Users", Icon: Users },
         { path: "/creation-challenge", label: "Créer Challenge", Icon: Code },
         { path: "/leaderboard", label: "Leaderboard", Icon: Trophy },
+        { path: "/community", label: "Community", Icon: Users },
       ];
     }
 
@@ -115,6 +116,7 @@ const Navbar = () => {
         ...baseLinks,
         { path: "/jury/dashboard", label: "Dashboard Jury", Icon: Star },
         { path: "/leaderboard", label: "Leaderboard", Icon: Trophy },
+        { path: "/community", label: "Community", Icon: Users },
       ];
     }
 
@@ -159,279 +161,209 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed w-full top-0 z-50 backdrop-blur-xl transition-all duration-300 ${
+      className={`fixed w-full top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-gray-950/95 border-b border-gray-800 shadow-md"
-          : "bg-gray-950/70"
+          ? "bg-gray-950/80 backdrop-blur-xl border-b border-white/10 shadow-2xl"
+          : "bg-transparent backdrop-blur-sm border-b border-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-5">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link
-            to="/"
-            onClick={() => setMenuOpen(false)}
-            className="flex items-center gap-3 group"
-          >
-            <div className="relative">
-              <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition">
-                <Terminal className="w-4 h-4 text-white" />
-              </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-gray-950 animate-pulse" />
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        
+        {/* Logo Section */}
+        <Link
+          to="/"
+          onClick={() => setMenuOpen(false)}
+          className="flex items-center gap-3 group"
+        >
+          <div className="relative">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20 group-hover:scale-105 transition-transform duration-300 rotate-3 group-hover:rotate-6">
+              <Terminal className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Bhil$
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-gray-950 animate-pulse" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent tracking-tight">
+              Bhil<span className="text-blue-500">$</span>
             </span>
-          </Link>
+          </div>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {links.map(({ path, label, Icon }) => (
-              <Link
-                key={path}
-                to={path}
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                  active(path)
-                    ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                    : "text-gray-300 hover:text-white hover:bg-gray-800/50"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {label}
-              </Link>
-            ))}
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center bg-white/5 p-1 rounded-full border border-white/5 backdrop-blur-md">
+          {links.map(({ path, label, Icon }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-all duration-300 ${
+                active(path)
+                  ? "bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-lg shadow-blue-500/25"
+                  : "text-gray-400 hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${active(path) ? "animate-pulse" : ""}`} />
+              {label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Right Actions */}
+        <div className="hidden lg:flex items-center gap-6">
+          {/* Search Bar */}
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-blue-400 transition-colors" />
+            <input
+              type="text"
+              placeholder="Rechercher..."
+              className="w-48 focus:w-64 transition-all duration-300 pl-10 pr-4 py-2.5 bg-gray-900/50 border border-white/10 rounded-full text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:bg-gray-900 focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10"
+            />
           </div>
 
-          {/* Right Side */}
-          <div className="hidden lg:flex items-center space-x-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-64 pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-              />
-            </div>
+          <div className="w-px h-8 bg-white/10" />
 
-            {loggedIn ? (
-              <>
-            {loggedIn && <NotificationCenter />}
+          {loggedIn ? (
+            <div className="flex items-center gap-4">
+              <NotificationCenter />
 
-                {/* Dropdown */}
-                <div className="relative" ref={dropRef}>
-                  <button
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="flex items-center gap-3 px-2 py-1 rounded-lg hover:bg-gray-800/50 text-gray-300 transition-all duration-200"
-                  >
-                    <div className="text-right text-sm leading-tight">
-                      <div className="font-medium">{user.name || "Utilisateur"}</div>
-                      <div className="text-xs text-gray-400">
-                        Lvl {user.level || 1} • {user.points || 0}pts
-                      </div>
+              {/* User Dropdown */}
+              <div className="relative" ref={dropRef}>
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-3 group p-1 pl-3 pr-1 rounded-full border border-transparent hover:border-white/10 hover:bg-white/5 transition-all duration-300"
+                >
+                  <div className="text-right hidden xl:block">
+                    <div className="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">
+                      {user.name}
                     </div>
-                     <img
+                    <div className="text-[10px] text-gray-500 font-mono">
+                      Lvl {user.level || 1} • {user.points || 0}XP
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <img
                       src={getRoleAvatar(user)}
                       alt="avatar"
-                      className="w-8 h-8 rounded-full border border-gray-700 shadow-sm"
+                      className="w-10 h-10 rounded-full border-2 border-gray-800 group-hover:border-blue-500/50 transition-colors shadow-lg"
                     />
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform ${
-                        dropdownOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
+                    <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-950 ${dropdownOpen ? 'bg-blue-500' : 'bg-gray-500'}`} />
+                  </div>
+                </button>
 
-                  {dropdownOpen && (
-                    <div className="absolute right-0 mt-3 w-80 bg-gray-900/95 border border-gray-700 rounded-xl shadow-xl overflow-hidden">
-                      <div className="px-4 py-3 bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={user.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.name || 'User'}`}
-                            alt={user.name}
-                            className="w-12 h-12 rounded-full border-2 border-blue-500/40"
-                          />
-                          <div className="flex-1">
-                            <div className="font-semibold text-white truncate">
-                              {user.name}
-                            </div>
-                            <div className="text-xs text-blue-400 truncate">
-                              {user.email}
-                            </div>
-                          </div>
+                {/* Dropdown Menu */}
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-4 w-72 bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden transform origin-top-right animate-in fade-in zoom-in-95 duration-200">
+                    <div className="p-5 bg-gradient-to-b from-white/5 to-transparent">
+                      <div className="flex items-center gap-4 mb-4">
+                        <img
+                          src={user.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.name}`}
+                          alt={user.name}
+                          className="w-16 h-16 rounded-2xl border-4 border-gray-800 shadow-xl"
+                        />
+                        <div>
+                          <h4 className="font-bold text-white text-lg">{user.name}</h4>
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-400">
+                            {user.role}
+                          </span>
                         </div>
                       </div>
-
-                      <div className="py-2">
-                        <Item
-                          Icon={User}
-                          label="Profile"
-                          onClick={() => navigate(`/profile/${user.id}`)}
-                        />
-                        <Item
-                          Icon={Brain}
-                          label="Dashboard"
-                          onClick={() => navigate("/")}
-                        />
-                        <Item
-                          Icon={Settings}
-                          label="Settings"
-                          onClick={() => navigate("/settings")}
-                        />
-
-                        {hasAdmin && (
-                          <>
-                            <div className="border-t border-gray-700 my-2" />
-                            <div className="px-4 py-1">
-                              <span className="text-xs text-purple-400 font-semibold uppercase tracking-wide">
-                                Admin Panel
-                              </span>
-                            </div>
-                            {isMgr && (
-                              <Item
-                                Icon={Shield}
-                                label="Validation Challenges"
-                                onClick={() => navigate("/admin/validation")}
-                                variant="a"
-                              />
-                            )}
-                            {isJ && (
-                              <Item
-                                Icon={Star}
-                                label="Review Submissions"
-                                onClick={() => navigate("/jury/submissions")}
-                                variant="j"
-                              />
-                            )}
-                            {isSA && (
-                              <>
-                                <Item
-                                  Icon={Users}
-                                  label="Manage Users"
-                                  onClick={() => navigate("/admin/users")}
-                                  variant="a"
-                                />
-                                <Item
-                                  Icon={Shield}
-                                  label="Gestion Challenges"
-                                  onClick={() => navigate("/admin/all-challenges")}
-                                  variant="a"
-                                />
-                                <Item
-                                  Icon={Zap}
-                                  label="System Config"
-                                  onClick={() => navigate("/admin/system")}
-                                  variant="s"
-                                />
-                              </>
-                            )}
-                          </>
-                        )}
-
-                        <div className="border-t border-gray-700 my-2" />
-                        <Item
-                          Icon={LogOut}
-                          label="Logout"
-                          onClick={logout}
-                          variant="r"
-                        />
+                      <div className="flex gap-2 text-center">
+                        <div className="flex-1 bg-black/20 rounded-xl p-2">
+                          <div className="text-xl font-black text-white">{user.level || 1}</div>
+                          <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Niveau</div>
+                        </div>
+                        <div className="flex-1 bg-black/20 rounded-xl p-2">
+                          <div className="text-xl font-black text-white">{user.points || 0}</div>
+                          <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Points</div>
+                        </div>
                       </div>
                     </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <div className="flex items-center gap-3">
-                <Link
-                  to="/login"
-                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white transition"
-                >
-                  <LogIn className="w-4 h-4" />
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-blue-500/20 transition-all duration-200 transform hover:scale-105"
-                >
-                  <UserPlus className="w-4 h-4" />
-                  Sign Up
-                </Link>
-              </div>
-            )}
-          </div>
 
-          {/* Mobile Toggle */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden p-2 text-gray-400 hover:text-white transition"
-          >
-            {menuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
-        </div>
-</div>
-      {/* Mobile Drawer */}
-      <div 
-        className={`lg:hidden fixed inset-x-0 top-16 bg-gray-900 border-t border-gray-800 shadow-2xl transition-all duration-300 ease-in-out transform ${
-          menuOpen ? "h-[calc(100vh-4rem)] opacity-100 translate-y-0" : "h-0 opacity-0 -translate-y-4 pointer-events-none"
-        }`}
-      >
-        <div className="px-5 py-6 space-y-6 overflow-y-auto h-full pb-20">
-          {/* Mobile User Profile */}
-          {loggedIn ? (
-            <div className="flex items-center gap-4 p-4 bg-gray-800/50 rounded-2xl border border-gray-700">
-              <img
-                src={getRoleAvatar(user)}
-                alt={user.name}
-                className="w-14 h-14 rounded-full border-2 border-blue-500/40 shadow-lg"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="font-bold text-white text-lg truncate">
-                  {user.name}
-                </div>
-                <div className="text-sm text-blue-400 font-medium">
-                  Niveau {user.level || 1} • {user.points || 0} pts
-                </div>
+                    <div className="p-2 space-y-1">
+                      <Item Icon={User} label="Mon Profil" onClick={() => navigate(`/profile/${user.id}`)} />
+                      <Item Icon={Settings} label="Paramètres" onClick={() => navigate("/settings")} />
+                      
+                      {hasAdmin && (
+                        <div className="my-2 p-2 bg-purple-500/5 rounded-xl border border-purple-500/10">
+                          <div className="px-2 mb-2 text-[10px] font-bold text-purple-400 uppercase tracking-widest flex items-center gap-2">
+                            <Shield className="w-3 h-3" /> Espace Admin
+                          </div>
+                          {isMgr && (
+                            <Item Icon={Shield} label="Validation" onClick={() => navigate("/admin/validation")} variant="a" />
+                          )}
+                          {isJ && (
+                            <Item Icon={Star} label="Notations" onClick={() => navigate("/jury/submissions")} variant="j" />
+                          )}
+                          {isSA && (
+                            <>
+                              <Item Icon={Users} label="Utilisateurs" onClick={() => navigate("/admin/users")} variant="a" />
+                              <Item Icon={Code} label="Challenges" onClick={() => navigate("/admin/all-challenges")} variant="a" />
+                            </>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="h-px bg-white/5 my-1" />
+                      <Item Icon={LogOut} label="Déconnexion" onClick={logout} variant="r" />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex items-center gap-3">
               <Link
                 to="/login"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 text-white font-semibold rounded-xl border border-gray-700 hover:bg-gray-700 transition"
+                className="px-5 py-2.5 text-sm font-bold text-gray-300 hover:text-white transition-colors"
               >
-                <LogIn className="w-4 h-4" />
-                Login
+                Connexion
               </Link>
               <Link
                 to="/register"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-xl shadow-lg transition"
+                className="px-6 py-2.5 bg-white text-black text-sm font-bold rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 shadow-lg shadow-white/10"
               >
-                <UserPlus className="w-4 h-4" />
-                Sign Up
+                Inscription
               </Link>
             </div>
           )}
+        </div>
 
-          {/* Navigation Links */}
-          <div className="space-y-1">
-            <div className="px-3 mb-2">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Navigation</span>
+        {/* Mobile Toggle */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="lg:hidden p-2 text-white bg-white/5 rounded-xl border border-white/10 active:scale-95 transition-all"
+        >
+          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      <div
+        className={`lg:hidden fixed inset-x-0 h-[calc(100vh-5rem)] bg-gray-950/95 backdrop-blur-xl border-t border-white/10 transition-all duration-500 ease-in-out z-40 ${
+          menuOpen ? "translate-y-20 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
+        }`}
+        style={{ top: "0" }}
+      >
+        <div className="p-6 space-y-6 h-full overflow-y-auto">
+          {loggedIn ? (
+            <div className="p-4 bg-white/5 rounded-3xl border border-white/10 flex items-center gap-4">
+              <img src={getRoleAvatar(user)} alt={user.name} className="w-14 h-14 rounded-2xl border-2 border-blue-500/30" />
+              <div>
+                <div className="text-lg font-bold text-white">{user.name}</div>
+                <div className="text-sm text-blue-400">Niveau {user.level || 1}</div>
+              </div>
             </div>
+          ) : null}
+
+          <div className="space-y-2">
+            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest px-4 mb-2">Menu</div>
             {links.map(({ path, label, Icon }) => (
               <Link
                 key={path}
                 to={path}
                 onClick={() => setMenuOpen(false)}
-                className={`flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
+                className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-base font-medium transition-all ${
                   active(path)
-                    ? "bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]"
-                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20"
+                    : "bg-gray-900 text-gray-400 hover:bg-gray-800 hover:text-white"
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -440,88 +372,14 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Admin Panel (Mobile) */}
-          {loggedIn && hasAdmin && (
-            <div className="space-y-1">
-              <div className="px-3 mb-2">
-                <span className="text-xs font-bold text-purple-400 uppercase tracking-widest">Admin Panel</span>
-              </div>
-              {isSA && (
-                <>
-                  <Link
-                    to="/admin/users"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-purple-300 hover:bg-purple-500/10 transition"
-                  >
-                    <Users className="w-5 h-5" />
-                    Manage Users
-                  </Link>
-                  <Link
-                    to="/admin/all-challenges"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-purple-300 hover:bg-purple-500/10 transition"
-                  >
-                    <Shield className="w-5 h-5" />
-                    Gestion Challenges
-                  </Link>
-                </>
-              )}
-              {isMgr && (
-                <Link
-                  to="/admin/validation"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-purple-300 hover:bg-purple-500/10 transition"
-                >
-                  <Shield className="w-5 h-5" />
-                  Validation Challenges
-                </Link>
-              )}
-              {isJ && (
-                <Link
-                  to="/jury/submissions"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-yellow-300 hover:bg-yellow-500/10 transition"
-                >
-                  <Star className="w-5 h-5" />
-                  Review Submissions
-                </Link>
-              )}
-            </div>
-          )}
-
-          {/* Additional User Links (Mobile) */}
           {loggedIn && (
-            <div className="space-y-1 pt-2">
-               <div className="px-3 mb-2">
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Compte</span>
-              </div>
-              <Link
-                to={`/profile/${user.id}`}
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition"
-              >
-                <User className="w-5 h-5" />
-                Mon Profil
-              </Link>
-              <Link
-                to="/settings"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition"
-              >
-                <Settings className="w-5 h-5" />
-                Paramètres
-              </Link>
-              
-              <div className="pt-4 border-t border-gray-800">
-                <button
-                  onClick={logout}
-                  className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-bold text-red-400 hover:bg-red-500/10 transition"
-                >
-                  <LogOut className="w-5 h-5" />
-                  Se déconnecter
-                </button>
-              </div>
-            </div>
+            <button
+              onClick={logout}
+              className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-red-500/10 text-red-400 font-bold border border-red-500/20 hover:bg-red-500/20 transition-all"
+            >
+              <LogOut className="w-5 h-5" />
+              Se déconnecter
+            </button>
           )}
         </div>
       </div>

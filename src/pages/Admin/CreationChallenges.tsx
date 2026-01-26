@@ -14,7 +14,8 @@ import {
   Star,
   Trophy,
   Coins,
-  Award
+  Award,
+  Lock as LockIcon
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { challengeService } from '../../service/api';
@@ -29,7 +30,9 @@ const CreateChallenge = () => {
     difficulty: 'Moyen',
     technologies: '',
     xpPoints: 0,
-    financialReward: 0
+    financialReward: 0,
+    submissionType: 'full', // 'full', 'file', 'password'
+    correctPassword: ''
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -206,7 +209,6 @@ const CreateChallenge = () => {
                       </label>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* XP Points */}
                         <div className="space-y-2">
                           <div className="relative group/input">
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -222,13 +224,8 @@ const CreateChallenge = () => {
                               className="w-full pl-24 pr-6 py-4 bg-gray-950 border border-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-yellow-500/50 transition-all placeholder:text-gray-700 text-right text-lg font-bold"
                             />
                           </div>
-                          <div className="flex justify-between px-2">
-                            <span className="text-xs text-gray-500">Récompense d'expérience</span>
-                            <span className="text-xs text-yellow-400 font-medium">↑ +classement</span>
-                          </div>
                         </div>
 
-                        {/* Financial Reward */}
                         <div className="space-y-2">
                           <div className="relative group/input">
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -244,33 +241,60 @@ const CreateChallenge = () => {
                               className="w-full pl-24 pr-6 py-4 bg-gray-950 border border-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all placeholder:text-gray-700 text-right text-lg font-bold"
                             />
                           </div>
-                          <div className="flex justify-between px-2">
-                            <span className="text-xs text-gray-500">Prime financière</span>
-                            <span className="text-xs text-green-400 font-medium">↑ +motivation</span>
-                          </div>
                         </div>
+                      </div>
+                    </div>
+
+                    {/* Submission Type Section */}
+                    <div className="space-y-4">
+                      <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1 flex items-center gap-2">
+                        <Rocket className="w-4 h-4" /> Type de Soumission Attendue
+                      </label>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {[
+                          { id: 'full', label: 'Complet', desc: 'GitHub + Live URL', icon: Code },
+                          { id: 'file', label: 'Fichier', desc: 'Lien simple fichier', icon: Info },
+                          { id: 'password', label: 'Password', desc: 'Clé / Mot de passe', icon: LockIcon }
+                        ].map((type) => {
+                          const Icon = type.icon;
+                          return (
+                            <button
+                              key={type.id}
+                              type="button"
+                              onClick={() => setFormData(prev => ({ ...prev, submissionType: type.id }))}
+                              className={`p-4 rounded-2xl border text-left transition-all ${
+                                formData.submissionType === type.id 
+                                  ? 'bg-blue-500/10 border-blue-500/50 ring-2 ring-blue-500/20' 
+                                  : 'bg-gray-950 border-gray-800 hover:border-gray-700'
+                              }`}
+                            >
+                              <Icon className={`w-5 h-5 mb-2 ${formData.submissionType === type.id ? 'text-blue-400' : 'text-gray-500'}`} />
+                              <div className={`text-sm font-bold ${formData.submissionType === type.id ? 'text-white' : 'text-gray-400'}`}>{type.label}</div>
+                              <div className="text-[10px] text-gray-600 mt-1">{type.desc}</div>
+                            </button>
+                          );
+                        })}
                       </div>
 
-                      {/* Combined Reward Preview */}
-                      <div className="mt-4 p-4 bg-gray-950/50 border border-gray-800 rounded-2xl">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-gray-400">Récompense totale estimée</span>
-                          <span className="text-lg font-bold bg-gradient-to-r from-yellow-400 to-green-400 bg-clip-text text-transparent">
-                            {formatNumber(formData.xpPoints)} XP + {formatNumber(formData.financialReward)} FCFA
-                          </span>
+                      {formData.submissionType === 'password' && (
+                        <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                          <div className="p-5 bg-gray-950 border border-gray-800 rounded-2xl space-y-3">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-blue-500">Mot de passe de validation (Optionnel)</label>
+                            <input 
+                              type="text"
+                              name="correctPassword"
+                              value={formData.correctPassword}
+                              onChange={handleChange}
+                              placeholder="Entrez la clé attendue..."
+                              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 text-sm font-mono"
+                            />
+                            <p className="text-[10px] text-gray-500 italic">
+                              Si rempli, le système validera automatiquement la soumission si la clé correspond.
+                            </p>
+                          </div>
                         </div>
-                        <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-yellow-500 to-green-500 rounded-full"
-                            style={{ 
-                              width: `${Math.min(100, 
-                                (parseInt(formData.xpPoints || 0) / 1000) * 50 + 
-                                (parseInt(formData.financialReward || 0) / 100000) * 50
-                              )}%` 
-                            }}
-                          />
-                        </div>
-                      </div>
+                      )}
                     </div>
 
                     {/* Dates */}

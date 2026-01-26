@@ -9,7 +9,7 @@ const ChallengeForm = ({ initialData = {}, onSubmit, onCancel, isEdit = false })
     endDate: '',
     difficulty: 'medium',
     technologies: '',
-    xpPoints: 0,
+    xpReward: 200,
     financialReward: 0
   });
 
@@ -25,14 +25,25 @@ const ChallengeForm = ({ initialData = {}, onSubmit, onCancel, isEdit = false })
         endDate: initialData.endDate || '',
         difficulty: initialData.difficulty || 'medium',
         technologies: initialData.technologies || '',
-        xpPoints: initialData.xpPoints || 0,
+        xpReward: initialData.xpReward || 200,
         financialReward: initialData.financialReward || 0
       });
     }
   }, [initialData, isEdit]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    
+    // Validation stricte pour l'XP
+    if (name === 'xpReward') {
+      const numValue = parseInt(value) || 0;
+      if (numValue > 1000) {
+        value = 1000;
+      } else if (numValue < 0) {
+        value = 0;
+      }
+    }
+
     setFormData({
       ...formData,
       [name]: value
@@ -231,15 +242,16 @@ const ChallengeForm = ({ initialData = {}, onSubmit, onCancel, isEdit = false })
            </div>
            
            <div>
-              <label htmlFor="xpPoints" className="block text-sm font-medium text-gray-700 mb-1">
-                 Points d'XP
+              <label htmlFor="xpReward" className="block text-sm font-medium text-gray-700 mb-1">
+                 Points d'XP (Max 1000)
               </label>
               <input
                 type="number"
-                id="xpPoints"
-                name="xpPoints"
+                id="xpReward"
+                name="xpReward"
                 min="0"
-                value={formData.xpPoints}
+                max="1000"
+                value={formData.xpReward}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />

@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { challengeService } from '../service/api';
 
 const ChallengesList = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const [challenges, setChallenges] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,7 +28,7 @@ const ChallengesList = () => {
   const fetchChallenges = async () => {
     try {
       setLoading(true);
-      const data = await challengeService.getAll();
+      const data = await challengeService.getAll({ status: 'active' });
       if (data.success) {
         setChallenges(data.data);
       }
@@ -75,13 +76,15 @@ const ChallengesList = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link 
-              to="/creation-challenge" 
-              className="flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-2xl font-bold transition-all shadow-lg hover:shadow-blue-500/20 hover:scale-105 active:scale-95 whitespace-nowrap"
-            >
-              <Plus className="w-5 h-5" />
-              Publier un défi
-            </Link>
+            {(user.role === 'Admin' || user.role === 'Superadmin') && (
+              <Link 
+                to="/creation-challenge" 
+                className="flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-2xl font-bold transition-all shadow-lg hover:shadow-blue-500/20 hover:scale-105 active:scale-95 whitespace-nowrap"
+              >
+                <Plus className="w-5 h-5" />
+                Publier un défi
+              </Link>
+            )}
           </div>
         </div>
 

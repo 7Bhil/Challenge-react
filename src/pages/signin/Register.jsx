@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Lock, Eye, EyeOff, UserPlus, ArrowLeft, Brain, Rocket, ChevronRight } from 'lucide-react';
+import { User, Mail, Lock as LockIcon, Eye, EyeOff, UserPlus, ArrowLeft, Brain, Rocket, ChevronRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../service/api';
 
@@ -134,7 +134,7 @@ export default function Register() {
                 Mot de passe
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                <LockIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
                 <input
                   type={showPassword ? "text" : "password"}
                   required

@@ -4,7 +4,6 @@ import {
   Users, 
   ChevronRight, 
   CheckCircle, 
-  Lock, 
   Search,
   Zap,
   Star

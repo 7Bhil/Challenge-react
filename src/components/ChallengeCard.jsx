@@ -5,7 +5,8 @@ import {
   Trophy, 
   ChevronRight, 
   Clock,
-  Sparkles
+  Sparkles,
+  Lock
 } from 'lucide-react';
 
 const ChallengeCard = ({ challenge }) => {
@@ -19,6 +20,7 @@ const ChallengeCard = ({ challenge }) => {
   };
 
   const isNew = new Date(challenge.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const isLocked = new Date(challenge.startDate) > new Date();
 
   return (
     <div className="group relative bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-3xl overflow-hidden hover:border-blue-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
@@ -80,10 +82,23 @@ const ChallengeCard = ({ challenge }) => {
         {/* Action */}
         <Link 
           to={`/challenge/${challenge._id}`}
-          className="flex items-center justify-center gap-2 w-full py-4 bg-gray-800 hover:bg-blue-600 text-white rounded-2xl font-bold transition-all group/btn shadow-inner"
+          className={`flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-bold transition-all group/btn shadow-inner ${
+            isLocked 
+              ? 'bg-gray-800/50 text-gray-500 border border-gray-700 cursor-not-allowed' 
+              : 'bg-gray-800 hover:bg-blue-600 text-white'
+          }`}
         >
-          Rejoindre l'arène
-          <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+          {isLocked ? (
+            <>
+              <Lock className="w-4 h-4" />
+              Arène Verrouillée
+            </>
+          ) : (
+            <>
+              Rejoindre l'arène
+              <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+            </>
+          )}
         </Link>
       </div>
     </div>

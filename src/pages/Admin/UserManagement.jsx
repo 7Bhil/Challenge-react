@@ -236,12 +236,7 @@ const UserManagement = () => {
                               </div>
                             )}
                          </div>
-                         <button 
-                           disabled={isSelf}
-                           className={`p-2 rounded-lg transition-all ${isSelf ? 'opacity-30 cursor-not-allowed' : 'hover:bg-red-500/10 text-gray-500 hover:text-red-400'}`}
-                         >
-                           <Trash2 className="w-5 h-5" />
-                         </button>
+                         {/* Suppression désactivée à la demande de l'utilisateur */}
                       </div>
                     </td>
                   </tr>

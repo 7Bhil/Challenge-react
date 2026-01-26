@@ -56,9 +56,23 @@ const Leaderboard = () => {
     }
   };
 
+  const [sortBy, setSortBy] = useState('points');
+
   const filteredRankings = rankings.filter(u => 
     u.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const sortedRankings = [...filteredRankings].sort((a, b) => {
+    if (sortBy === 'level') {
+      // Sort by level desc, then xp desc
+      const levelDiff = (b.level || 1) - (a.level || 1);
+      if (levelDiff !== 0) return levelDiff;
+      return (b.xp || 0) - (a.xp || 0);
+    } else {
+      // Default: sort by points desc
+      return (b.points || 0) - (a.points || 0);
+    }
+  });
 
   if (loading) {
     return (
@@ -151,6 +165,11 @@ const Leaderboard = () => {
               />
             </div>
 
+            {/* Sort Controls - Mobile optimized */}
+            <div className="flex justify-end gap-2 mb-4">
+               {/* This space can be used for filters later */}
+            </div>
+
             {/* General List Table */}
             <div className="bg-gray-900/50 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl">
               <table className="w-full text-left">
@@ -158,12 +177,22 @@ const Leaderboard = () => {
                   <tr className="bg-gray-900/80 border-b border-gray-800">
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Rang</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Participant</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Niveau</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Points</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 cursor-pointer hover:text-white transition-colors group select-none" onClick={() => setSortBy('level')}>
+                      <div className="flex items-center gap-1">
+                        Niveau
+                        {sortBy === 'level' && <ChevronDown className="w-3 h-3 text-purple-400" />}
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right cursor-pointer hover:text-white transition-colors group select-none" onClick={() => setSortBy('points')}>
+                       <div className="flex items-center justify-end gap-1">
+                        Points
+                        {sortBy === 'points' && <ChevronDown className="w-3 h-3 text-purple-400" />}
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800/50">
-                  {filteredRankings.length > 0 ? filteredRankings.map((user, index) => (
+                  {sortedRankings.length > 0 ? sortedRankings.map((user, index) => (
                     <tr key={user._id || index} className="hover:bg-gray-800/30 transition-colors group">
                       <td className="px-6 py-4">
                         {getRankBadge(index)}
@@ -185,11 +214,16 @@ const Leaderboard = () => {
                         </Link>
                       </td>
                       <td className="px-6 py-4">
-                         <span className="text-sm font-medium text-gray-400">Niveau {user.level || 1}</span>
+                         <div className="flex flex-col">
+                            <span className="text-sm font-bold text-white">Niveau {user.level || 1}</span>
+                            <span className="text-xs text-purple-400 font-medium">
+                               {Math.floor((user.xp || 0) % 1000)} XP
+                            </span>
+                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="text-lg font-black text-white">{user.points || 0}</div>
-                        <div className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Points</div>
+                        <div className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Points Totaux</div>
                       </td>
                     </tr>
                   )) : (

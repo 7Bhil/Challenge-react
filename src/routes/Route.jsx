@@ -15,6 +15,8 @@ import SuperAdminChallenges from "../pages/SuperAdmin/AllChallenges";
 import ChallengeValidation from "../pages/SuperAdmin/ChallengeValidation";
 import NotificationsPage from "../pages/Notifications";
 import JuryDashboard from "../pages/Jury/JuryDashboard";
+import CommunityChat from "../pages/CommunityChat";
+import Settings from "../pages/Settings"; // Import Settings
 
 export default function AppRoutes() {
   return (
@@ -26,6 +28,7 @@ export default function AppRoutes() {
         <Route path="/challenge/:id" element={<ChallengeDetail />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/profile/:userId" element={<Profil />} />
+        <Route path="/settings" element={<Settings />} /> {/* Settings Route */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/notifications" element={<NotificationsPage />} />
@@ -44,6 +47,9 @@ export default function AppRoutes() {
         <Route path="/jury/dashboard" element={<JuryDashboard />} />
         <Route path="/jury/submissions" element={<JuryDashboard />} />
         <Route path="/jury/submissions/:challengeId" element={<JurySubmissions />} />
+        
+        {/* Community Route */}
+        <Route path="/community" element={<CommunityChat />} />
       </Routes>
 
     </>
