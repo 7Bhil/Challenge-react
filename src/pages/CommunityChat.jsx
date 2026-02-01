@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import { Send, User as UserIcon, Shield, Star, Rocket, MessageSquare, Info } from 'lucide-react';
-import { getRoleAvatar } from '../service/api';
+import api, { getRoleAvatar, BASE_URL } from '../service/api';
 
 // Initialize socket outside component to prevent multiple connections
-const socket = io('http://localhost:5000');
+const socket = io(BASE_URL);
 
 const CommunityChat = () => {
   const [currentMessage, setCurrentMessage] = useState("");
@@ -19,11 +19,9 @@ const CommunityChat = () => {
     // Fetch message history
     const fetchMessages = async () => {
       try {
-        // Use import.meta.env.VITE_API_URL or hardcoded for now if env not setup
-        const response = await fetch('http://localhost:5000/api/messages/community_general');
-        const data = await response.json();
-        if (data.success) {
-          setMessageList(data.data);
+        const response = await api.get('/messages/community_general');
+        if (response.data.success) {
+          setMessageList(response.data.data);
         }
       } catch (error) {
         console.error('Failed to load messages:', error);
