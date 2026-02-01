@@ -292,10 +292,10 @@ export const getRoleAvatar = (user) => {
   if (!user) return `https://api.dicebear.com/7.x/bottts/svg?seed=guest`;
   
   const roleColors = {
-    'Superadmin': '7c3aed', // Violet/Or (on part sur Violet vif)
-    'Admin': '2563eb',      // Bleu
-    'Jury': '16a34a',       // Vert
-    'Challenger': '4b5563'  // Gris
+    'Superadmin': 'ef4444', // Red
+    'Admin': '22c55e',      // Green
+    'Jury': 'eab308',       // Yellow
+    'Challenger': '3b82f6'  // Blue
   };
 
   const backgroundColor = roleColors[user.role] || '4b5563';

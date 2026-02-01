@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
-import { Send, User as UserIcon, Shield, Star, Rocket, MessageSquare, Info } from 'lucide-react';
+import { Send, User as UserIcon, Shield, Star, Rocket, MessageSquare, Info, Crown, Scale } from 'lucide-react';
 import api, { getRoleAvatar, BASE_URL } from '../service/api';
 
 // Initialize socket outside component to prevent multiple connections
@@ -74,12 +74,13 @@ const CommunityChat = () => {
   const getRoleBadge = (role) => {
     switch(role) {
       case 'Superadmin':
+        return <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px] font-bold uppercase flex items-center gap-1"><Crown className="w-3 h-3" /> Superadmin</span>;
       case 'Admin':
-        return <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px] font-bold uppercase flex items-center gap-1"><Shield className="w-3 h-3" /> Staff</span>;
+        return <span className="px-2 py-0.5 rounded bg-green-500/20 text-green-400 text-[10px] font-bold uppercase flex items-center gap-1"><Shield className="w-3 h-3" /> Admin</span>;
       case 'Jury':
-        return <span className="px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 text-[10px] font-bold uppercase flex items-center gap-1"><Star className="w-3 h-3" /> Jury</span>;
+        return <span className="px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 text-[10px] font-bold uppercase flex items-center gap-1"><Scale className="w-3 h-3" /> Jury</span>;
       default:
-        return <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase flex items-center gap-1"><Rocket className="w-3 h-3" /> Challenger</span>;
+        return <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase flex items-center gap-1"><Star className="w-3 h-3" /> Challenger</span>;
     }
   };
 
@@ -159,7 +160,13 @@ const CommunityChat = () => {
                     className={`px-5 py-3 rounded-2xl text-sm leading-relaxed shadow-sm ${
                       isMe 
                         ? 'bg-blue-600 text-white rounded-tr-none' 
-                        : 'bg-gray-800 text-gray-200 border border-gray-700 rounded-tl-none'
+                        : msg.role === 'Superadmin'
+                          ? 'bg-red-500/10 text-red-100 border border-red-500/20 rounded-tl-none'
+                          : msg.role === 'Admin'
+                            ? 'bg-green-500/10 text-green-100 border border-green-500/20 rounded-tl-none'
+                            : msg.role === 'Jury'
+                              ? 'bg-yellow-500/10 text-yellow-100 border border-yellow-500/20 rounded-tl-none'
+                              : 'bg-gray-800 text-gray-200 border border-gray-700 rounded-tl-none'
                     }`}
                   >
                     {msg.message}
