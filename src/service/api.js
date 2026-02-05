@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ROLE_CONFIG } from '../data/roleConfig';
 
 const isProduction = window.location.hostname !== 'localhost';
 export const API_URL = isProduction 
@@ -289,17 +290,13 @@ export const adminService = {
 // Fonction helper pour définir le token (rétrocompatibilité)
 // Fonction helper pour obtenir l'avatar basé sur le rôle
 export const getRoleAvatar = (user) => {
-  if (!user) return `https://api.dicebear.com/7.x/bottts/svg?seed=guest`;
+  if (!user) return ROLE_CONFIG['Challenger'].avatar;
   
-  const roleColors = {
-    'Superadmin': 'ef4444', // Red
-    'Admin': '22c55e',      // Green
-    'Jury': 'eab308',       // Yellow
-    'Challenger': '3b82f6'  // Blue
-  };
+  // N'utiliser l'avatar stocké que si ce n'est pas un ancien défaut Dicebear
+  if (user.avatar && !user.avatar.includes('dicebear.com')) return user.avatar;
 
-  const backgroundColor = roleColors[user.role] || '4b5563';
-  return `https://api.dicebear.com/7.x/bottts/svg?seed=${user.name}&backgroundColor=${backgroundColor}`;
+  const config = ROLE_CONFIG[user.role] || ROLE_CONFIG['Challenger'];
+  return config.avatar;
 };
 
 export const setAuthToken = (token) => {

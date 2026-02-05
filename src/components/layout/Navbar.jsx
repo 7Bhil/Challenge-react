@@ -20,9 +20,12 @@ import {
   Zap,
   Brain,
   User,
+  ShieldAlert,
+  ShieldCheck,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getRoleAvatar } from "../../service/api";
+import { ROLE_CONFIG, getRoleData } from "../../data/roleConfig";
 import NotificationCenter from "../notifications/NotificationCenter";
 
 const Navbar = () => {
@@ -37,8 +40,8 @@ const Navbar = () => {
   // Récupérer l'utilisateur réel depuis le localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   
-  // Si pas d'utilisateur mais token présent, on pourrait appeler checkAuth
-  // Mais pour l'instant on se fie au localStorage mis à jour au login
+  const roleConfig = getRoleData(user.role);
+  const Icon = roleConfig.icon;
 
 
   // Scroll effect
@@ -153,11 +156,8 @@ const Navbar = () => {
   };
 
   const role = user.role;
-  const isSA = role === "Superadmin";
-  const isA = role === "Admin";
-  const isJ = role === "Jury";
-  const hasAdmin = isSA || isA || isJ;
-  const isMgr = isSA; // Seul le Superadmin valide les challenges désormais
+  const hasAdmin = role === "Superadmin" || role === "Admin" || role === "Jury";
+  const isMgr = role === "Superadmin"; // Seul le Superadmin valide les challenges désormais
 
   return (
     <nav
@@ -231,7 +231,8 @@ const Navbar = () => {
                   className="flex items-center gap-3 group p-1 pl-3 pr-1 rounded-full border border-transparent hover:border-white/10 hover:bg-white/5 transition-all duration-300"
                 >
                   <div className="text-right hidden xl:block">
-                    <div className="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">
+                    <div className="text-sm font-bold text-white group-hover:text-blue-300 transition-colors flex items-center justify-end gap-1.5">
+                      <Icon className={`w-4 h-4 ${roleConfig.textColor} ${roleConfig.isSpecial && user.role === 'Superadmin' ? 'animate-pulse' : ''}`} />
                       {user.name}
                     </div>
                     <div className="text-[10px] text-gray-500 font-mono">
@@ -242,7 +243,11 @@ const Navbar = () => {
                     <img
                       src={getRoleAvatar(user)}
                       alt="avatar"
-                      className="w-10 h-10 rounded-full border-2 border-gray-800 group-hover:border-blue-500/50 transition-colors shadow-lg"
+                      className={`w-10 h-10 rounded-full border-2 transition-all shadow-lg ${
+                        roleConfig.isSpecial 
+                          ? `${roleConfig.borderColor} ${roleConfig.shadowColor} scale-110` 
+                          : 'border-gray-800'
+                      } group-hover:border-blue-500/50`}
                     />
                     <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-950 ${dropdownOpen ? 'bg-blue-500' : 'bg-gray-500'}`} />
                   </div>
@@ -254,7 +259,7 @@ const Navbar = () => {
                     <div className="p-5 bg-gradient-to-b from-white/5 to-transparent">
                       <div className="flex items-center gap-4 mb-4">
                         <img
-                          src={user.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.name}`}
+                          src={getRoleAvatar(user)}
                           alt={user.name}
                           className="w-16 h-16 rounded-2xl border-4 border-gray-800 shadow-xl"
                         />
@@ -344,11 +349,30 @@ const Navbar = () => {
       >
         <div className="p-6 space-y-6 h-full overflow-y-auto">
           {loggedIn ? (
-            <div className="p-4 bg-white/5 rounded-3xl border border-white/10 flex items-center gap-4">
-              <img src={getRoleAvatar(user)} alt={user.name} className="w-14 h-14 rounded-2xl border-2 border-blue-500/30" />
-              <div>
-                <div className="text-lg font-bold text-white">{user.name}</div>
-                <div className="text-sm text-blue-400">Niveau {user.level || 1}</div>
+            <div 
+              className="p-4 bg-gradient-to-br from-blue-600/10 to-violet-600/10 rounded-3xl border border-white/10 flex items-center gap-4 cursor-pointer hover:bg-white/5 transition-colors"
+              onClick={() => {
+                navigate(`/profile/${user.id}`);
+                setMenuOpen(false);
+              }}
+            >
+              <img 
+                src={getRoleAvatar(user)} 
+                alt={user.name} 
+                className={`w-16 h-16 rounded-2xl border-2 shadow-lg object-cover ${
+                  roleConfig.isSpecial ? `${roleConfig.borderColor} ${roleConfig.shadowColor}` : 'border-blue-500/30'
+                }`} 
+              />
+              <div className="flex-1">
+                <div className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors flex items-center gap-2">
+                  <Icon className={`w-5 h-5 ${roleConfig.textColor}`} />
+                  {user.name}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-blue-400 font-medium">Niveau {user.level || 1}</span>
+                  <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
+                  <span className="text-xs text-gray-400 uppercase tracking-wider font-bold">{user.role}</span>
+                </div>
               </div>
             </div>
           ) : null}
@@ -371,6 +395,28 @@ const Navbar = () => {
               </Link>
             ))}
           </div>
+
+          {loggedIn && (
+            <div className="space-y-2 pt-4 border-t border-white/5">
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-widest px-4 mb-2">Compte</div>
+              <Link
+                to={`/profile/${user.id}`}
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-4 px-6 py-4 rounded-2xl bg-gray-900 text-gray-400 hover:bg-gray-800 hover:text-white transition-all"
+              >
+                <User className="w-5 h-5" />
+                Mon Profil
+              </Link>
+              <Link
+                to="/settings"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-4 px-6 py-4 rounded-2xl bg-gray-900 text-gray-400 hover:bg-gray-800 hover:text-white transition-all"
+              >
+                <Settings className="w-5 h-5" />
+                Paramètres
+              </Link>
+            </div>
+          )}
 
           {loggedIn && (
             <button

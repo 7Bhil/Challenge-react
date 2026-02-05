@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { challengeService, getRoleAvatar } from '../service/api';
+import { getRoleData } from '../data/roleConfig';
 
 const ChallengeLeaderboard = ({ challengeId }) => {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -94,11 +95,16 @@ const ChallengeLeaderboard = ({ challengeId }) => {
                   </td>
                   <td className="px-6 py-4">
                     <Link to={`/profile/${submission.user?._id || submission.user?.id}`} className="flex items-center group/user">
-                      <img 
-                        src={getRoleAvatar(submission.user)} 
-                        alt={submission.user?.name} 
-                        className="w-10 h-10 rounded-full border-2 border-gray-600 group-hover:border-purple-500 transition-colors"
-                      />
+                {(() => {
+                  const config = getRoleData(submission.user?.role);
+                  return (
+                    <img 
+                      src={getRoleAvatar(submission.user)} 
+                      alt={submission.user?.name} 
+                      className={`w-10 h-10 rounded-full border-2 transition-colors ${config.borderColor} group-hover:border-${config.color}`}
+                    />
+                  );
+                })()}
                       <div className="ml-3">
                         <p className="text-white font-semibold group-hover:text-purple-300 transition-colors">
                           {submission.user?.name}

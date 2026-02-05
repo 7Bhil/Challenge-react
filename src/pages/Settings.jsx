@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Mail, Heart, Save, ArrowLeft, Camera } from 'lucide-react';
+import { User, Mail, Heart, Save, ArrowLeft, Camera, Lock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { userService, authService, getRoleAvatar } from '../service/api';
 
@@ -14,7 +14,9 @@ const Settings = () => {
     name: currentUser?.name || '',
     email: currentUser?.email || '',
     passion: currentUser?.passion || '',
-    avatar: currentUser?.avatar || ''
+    avatar: currentUser?.avatar || '',
+    password: '',
+    confirmPassword: ''
   });
 
   const handleChange = (e) => {
@@ -29,6 +31,18 @@ const Settings = () => {
     setLoading(true);
     setError('');
     setSuccess('');
+
+    if (formData.password && formData.password !== formData.confirmPassword) {
+      setError('Les mots de passe ne correspondent pas');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password && formData.password.length < 6) {
+      setError('Le mot de passe doit faire au moins 6 caractères');
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await userService.updateProfile(formData);
@@ -125,33 +139,36 @@ const Settings = () => {
               </div>
             </div>
 
-             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-400 ml-1">Passion / Bio courte</label>
-              <div className="relative">
-                <Heart className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                <input
-                  type="text"
-                  name="passion"
-                  value={formData.passion}
-                  onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder-gray-600"
-                  placeholder="Ex: Passionné de React et Node.js"
-                />
+            <div className="space-y-4 pt-4 border-t border-gray-800">
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Sécurité</h3>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-400 ml-1">Nouveau mot de passe</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder-gray-600"
+                    placeholder="Laisser vide pour ne pas changer"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-400 ml-1">URL Avatar (Optionnel)</label>
-              <div className="relative">
-                <Camera className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                <input
-                  type="text"
-                  name="avatar"
-                  value={formData.avatar}
-                  onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder-gray-600"
-                  placeholder="https://..."
-                />
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-400 ml-1">Confirmer le mot de passe</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-4 py-3 bg-gray-950 border border-gray-800 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder-gray-600"
+                    placeholder="Répétez le mot de passe"
+                  />
+                </div>
               </div>
             </div>
 

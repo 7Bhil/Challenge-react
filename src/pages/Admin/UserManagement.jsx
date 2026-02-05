@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { userService, adminService, getRoleAvatar } from "../../service/api";
+import { ROLE_CONFIG, getRoleData } from "../../data/roleConfig";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -79,21 +80,14 @@ const UserManagement = () => {
   };
 
   const getRoleIcon = (role) => {
-    switch (role) {
-      case 'Superadmin': return <ShieldAlert className="w-4 h-4 text-red-500" />;
-      case 'Admin': return <ShieldCheck className="w-4 h-4 text-purple-500" />;
-      case 'Jury': return <Shield className="w-4 h-4 text-yellow-500" />;
-      default: return <UserIcon className="w-4 h-4 text-blue-500" />;
-    }
+    const config = getRoleData(role);
+    const Icon = config.icon;
+    return <Icon className={`w-4 h-4 ${config.textColor}`} />;
   };
 
   const getRoleBadgeClass = (role) => {
-    switch (role) {
-      case 'Superadmin': return 'bg-red-500/10 text-red-400 border-red-500/20';
-      case 'Admin': return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-      case 'Jury': return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
-      default: return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-    }
+    const config = getRoleData(role);
+    return `${config.bgColor} ${config.textColor} ${config.borderColor}`;
   };
 
   const filteredUsers = users.filter(user => {
