@@ -418,7 +418,7 @@ const Navbar = () => {
             </div>
           )}
 
-          {loggedIn && (
+          {loggedIn ? (
             <button
               onClick={logout}
               className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-red-500/10 text-red-400 font-bold border border-red-500/20 hover:bg-red-500/20 transition-all"
@@ -426,6 +426,25 @@ const Navbar = () => {
               <LogOut className="w-5 h-5" />
               Se déconnecter
             </button>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-gray-900 text-white font-bold border border-white/10 hover:bg-gray-800 transition-all"
+              >
+                <LogIn className="w-5 h-5" />
+                Connexion
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-white text-black font-bold hover:bg-gray-200 transition-all shadow-lg shadow-white/5"
+              >
+                <UserPlus className="w-5 h-5" />
+                Inscription
+              </Link>
+            </div>
           )}
         </div>
       </div>
