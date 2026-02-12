@@ -157,7 +157,9 @@ const Navbar = () => {
 
   const role = user.role;
   const hasAdmin = role === "Superadmin" || role === "Admin" || role === "Jury";
-  const isMgr = role === "Superadmin"; // Seul le Superadmin valide les challenges désormais
+  const isSA = role === "Superadmin";
+  const isJ = role === "Jury";
+  const isMgr = isSA; // Seul le Superadmin valide les challenges désormais
 
   return (
     <nav
