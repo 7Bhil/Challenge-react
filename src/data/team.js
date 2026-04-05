@@ -47,8 +47,8 @@ export const teamData = {
       id: 4,
       name: "Jolidon HOUNGUE",
       username: "@jolidon_hounge",
-      role: "Dev Frontend && Analist Cyber Sécurité",
-      skill: "React, Vue, Réseau",
+      role: "Dev Fullstacks && Mobile| Design| Analist Cyber Sécurité",
+      skill: "React|Vue|wireshark|git| Réseau",
       image: pote04
     },
     {
